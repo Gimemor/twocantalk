@@ -64,7 +64,7 @@ function initChat(
     context.oldInputValue = null;
     context.inputHandler = function(event) {
         let value = $(inputSelector).val()
-        if(!value || value.length <= 0 || value == context.oldInputValue) {
+        if(!value || value.length <= 0) {
             return;
         }
         $(inputSelector).val('');
@@ -140,6 +140,7 @@ function initChat(
                 context.addMessage(event.value, context.isVoiceEnabled, shouldTranslate, sourceText, translatedText, sourceLanguageId, translatedLanguageId);
             }
         } else if(event.type == 'reverse-translation') {
+                event.value.type = (event.value.type == MESSAGE_TYPE.sent)? MESSAGE_TYPE.recieved : MESSAGE_TYPE.sent;
                 translate(event.value.translatedText, event.value.translatedLanguageId, context.languageId, function (data, status) {
                     translatedText = event.value.text = data.data.translations[0].translatedText;
                     context.addMessage(
@@ -163,7 +164,7 @@ function initChat(
         for(let i = 0; i < context.messages.length; i++) {
             const message = context.messages[i]
             
-            if(message.wasTranslated) {
+            if(message.wasTranslated && message.type == MESSAGE_TYPE.sent) {
                 str = `<tr class="row chat-line flex-nowrap">\
                 <td class="col-md-1 col-xs-1 toggle-row-container">\
                 <button onClick='toggleRow(this)' title="Toggle reverse translation" type="button" class="btn btn-light toggle-row" data-toggle="button" aria-pressed="false" autocomplete="off"></button>\
