@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EMAS UK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Themesdesign" name="author" />
+    <!-- favicon -->
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <!-- Styles -->
+    <link href="../keyboard/css/keyboard-basic.min.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/bootstrap-treeview.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="../css/twocantalk.css" rel="stylesheet">
+    <link href="../css/expandable-table.css" rel="stylesheet">
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.nanoscroller.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="../../js/purify.min.js"></script>
+    <script src="../../js/html2canvas.min.js"></script>
+    <script src="../../js/pdfmake.min.js"></script>
+    <script src="../../js/vfs_fonts.js"></script>
+    <script src="../../js/bootstrap-treeview.min.js"></script>
+    <script type="text/javascript" src="../keyboard/js/jquery.keyboard.js"></script>
+    <script type="text/javascript" src="https://vhss-d.oddcast.com/vhost_embed_functions_v4.php?acc=1015607&js=0"></script>\
+    <script type="text/javascript" src="../../js/lodash.js"></script>
+    <script type="text/javascript" src="../../js/keyboard.js"></script>
+    <script type="text/javascript" src="../../js/twocantalk/twocantalk-template.js"></script>
+    <script type="text/javascript" src="../../js/twocantalk/twocantalk.js"></script>
+
+    <script type="text/javascript">
+        var chatsDefinitions = [
+            {
+                placeholderSelector: '#firstChatPlaceholder',
+                userInputId: 'firstUserInput',
+                keyboardContainerId: 'firstKeyboardContainer',
+                chatHistoryId: 'firstChatHistory',
+                toggleVoiceId: 'firstToggleVoice',
+                languageSelectorId: 'firstLanguageSelector',
+                repeatTranslatedButtonId: 'firstRepeatTranslatedButton',
+                repeatLastSentenceButtonId: 'firstRepeatLastSentenceButton',
+                toggleTranslationButtonId: 'firstToggleTranslationButton',
+                exportToPdfButtonId: 'firstExportToPdfButton',
+                openPharsebookButtonId: 'firstOpenPhrasebookButton',
+                phrasebookModalId: 'phrasebookModal',
+                phrasebookTreeId: 'phrasebookTree',
+                toggleKeyboardId: 'firstToggleKeyboard',
+                genderId: GENDER_ID.female
+            },
+            {
+                placeholderSelector: '#secondChatPlaceholder',
+                userInputId: 'secondUserInput',
+                keyboardContainerId: 'secondKeyboardContainer',
+                chatHistoryId: 'secondChatHistory',
+                toggleVoiceId: 'secondToggleVoice',
+                languageSelectorId: 'secondLanguageSelector',
+                repeatTranslatedButtonId: 'secondRepeatTranslatedButton',
+                repeatLastSentenceButtonId: 'secondRepeatLastSentence',
+                toggleTranslationButtonId: 'secondToggleTranslationButton',
+                exportToPdfButtonId: 'secondExportToPdfButton',
+                openPharsebookButtonId: 'secondOpenPhrasebookButton',
+                phrasebookModalId: 'phrasebookModal',
+                phrasebookTreeId: 'phrasebookTree',
+                toggleKeyboardId: 'secondToggleKeyboard',
+                genderId: GENDER_ID.male 
+            }
+        ]
+    </script>
+</head>
+
+<body class="admin-pages">
+    <div style="display: none;" id="date-time"></div>
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <ul class="mt-3">
+                    <li>
+                        <a class="sidebar-sub-toggle"><i class="fa fa-home"></i> Administration </a>
+                    </li>
+                    <li><a class="sidebar-sub-toggle"><i class="fa fa-folder-open-o"> </i>Ressources Library<i class="fa fa-chevron-down sidebar-collapse-icon"></i></a>
+                        <ul>
+                            <li><a href="ressources.html">Resources by Language</a></li>
+                            <li><a href="ressources.html">Resources by Subject</a></li>
+                            <li><a href="ressources.html">Knowledge Share by Country</a></li>
+                            <li><a href="ressources.html">Teacher's Support Documents</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="texttutor.html"><i class="fa fa-file-text-o"></i> Text Tutor </a></li>
+                    <li><a href="talktutor.html"><i class="fa fa-commenting-o"></i>  Talking Tutor </a></li>
+                    <li class="active"><a href="twocantalk.html"><i class="fa fa-comments-o"></i> Twocan Talk </a></li>
+                    <li><a href="admin.html"><i class="fa fa-address-book-o"></i> Pharesebok Manager</a></li>
+                    <li><a href="../index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /# sidebar -->
+    
+    <div class="header">
+        <div class="pull-left">
+            <div class="logo"><a href="admin.html"> <img src="../images/logo.png" height="40" alt="" /></a></div>
+            <div class="hamburger sidebar-toggle">
+                <span class="line"></span>
+                <span class="line"></span>
+                <span class="line"></span>
+            </div>
+        </div>
+        <div class="pull-right p-r-15">
+            <ul>
+                <li class="header-icon dib"><img class="avatar-img" src="assets/images/user-1.png" alt="" /> <span class="user-avatar"> Sarah Boutej <i class="fa fa-chevron-down f-s-10"></i></span>
+                    <div class="drop-down dropdown-profile">
+                        <div class="dropdown-content-body">
+                            <ul>
+                                <li><a href="#"><i class="fa fa-user-o"></i> <span>Profile</span></a></li>
+                                <li><a href="#"><i class="fa fa-sliders"></i> <span>Setting</span></a></li>
+                                <li><a href="#"><i class="fa fa-life-ring"></i> <span>Help</span></a></li>
+                                <li><a href="../index.html"><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div id="main-content">
+                    <div class="row d-flex flex-row p-8 pt-0">
+                        <div class="p-8 col-md-6" id="firstChatPlaceholder">
+                            <div class="avatar-placeholder">
+                                <div class="avatar">
+                                    <script>
+                                        chatsDefinitions[0].scene = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018970, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
+                                        createChat([chatsDefinitions[0]]);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8 col-md-6" id="secondChatPlaceholder">
+                            <div class="avatar-placeholder">
+                                <div class="avatar">
+                                    <script>
+                                        chatsDefinitions[1].scene = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018971, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
+                                        createChat([chatsDefinitions[1]]);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal-placeholder"></div>
+        <script>
+            const toggleRow = (element) => {
+                $(element).parent().parent().next('.expanded-row-content').toggle('hide-row');
+                console.log(event);
+            }
+        </script>
+        <script src="assets/js/scripts.js"></script>
+        <script src="assets/js/sidebar.js"></script>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="phrasebookModal" tabindex="-1" role="dialog" aria-labelledby="phrasebookModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xs" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="phrasebookModalLabel">Phrasebook</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="phrasebookTree"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+        <script type="text/javascript" src="../keyboard/layouts/albanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/arabic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/belarusian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/albanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/arabic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/belarusian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/bengali.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/bulgarian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/burmese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/catalan.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/chinese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/danish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ethiopic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/french.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/german.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/hebrew.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/hindi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/hungarian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/hungarianansi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/japanese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/keyboard-layouts-combined.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/keyboard-layouts-greywyvern.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/keyboard-layouts-microsoft.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/latvian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/mongolian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Albanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Arabic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Armenian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Assamese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Azeri.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Bashkir.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Belarusian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Belgian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Bengali.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Bulgarian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Canadian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Chinese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Czech.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Danish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Devanagari.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Divehi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Dutch.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Estonian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Faeroese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Finnish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-French.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Gaelic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Georgian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-German.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Greek.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Greenlandic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Gujarati.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Hausa.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Hebrew.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Hindi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Hungarian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Icelandic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Igbo.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Inuktitut.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Irish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Italian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Japanese-Hiragana.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Kannada.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Kazakh.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Korean.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Kyrgyz-Cyrillic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Lao.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Latin-American.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Latvian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Lithuanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Luxembourgish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Macedonian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Malayalam.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Maltese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Maori.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Marathi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Mongolian-Cyrillic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Nepali.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Norwegian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Oriya.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Pashto.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Persian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Polish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Portuguese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Punjabi.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Romanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Russian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Sami.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Serbian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Setswana.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Sinhala.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Slovak.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Slovenian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Sorbian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Spanish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Swedish-Sami.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Swedish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Swiss-German.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Syriac.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Tajik.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Tamil.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Tatar.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Telugu.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Thai.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Tibetan.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Turkish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Turkmen.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Ukrainian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-United-Kingdom.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Urdu.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-US-Dvorak.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-US-English.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Uyghur.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Uzbek-Cyrillic.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Vietnamese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Wolof.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Yakut.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/ms-Yoruba.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/persian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/polish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/portuguese.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/romanian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/russian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/serbian.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/spanish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/swedish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/syriac.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/tamil.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/thai.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/turkish.min.js"></script>
+        <script type="text/javascript" src="../keyboard/layouts/vietnamese.min.js"></script>
+
+
+        <script>
+
+            $(document).ready(function () {
+                var context = initTct(chatsDefinitions);
+            });
+        </script>
+
+</body>
+</html> 

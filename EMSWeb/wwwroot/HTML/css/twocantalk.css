@@ -1,0 +1,216 @@
+.keyboard-container {
+  width: 100%;
+}
+
+._html5Player .main_container {
+    z-index: 0 !important;
+}
+
+.p-8 {
+    padding: 8px;
+}
+.pb-8 {
+    padding-bottom: 8px;
+}
+.pt-8 {
+    padding-top: 8px;
+}
+.pt-0 {
+    padding-top: 0;
+}
+.pl-8 {
+    padding-left: 8px;
+}
+.chat-history {
+    min-height: 150px;
+    overflow: auto;
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    background: white;
+    padding: 8px;
+}
+.chat-input {
+    width: 100%;
+}
+.languageSelectorContainer {
+    flex-grow: 2;
+    display: flex;
+    justify-content: flex-end;
+    vertical-align: middle;
+}
+ .languageSelector {
+    width: 200px;
+
+ }
+
+.ui-keyboard {
+     position: static !important;
+}
+
+.ui-keyboard span { font-size: 1em; }
+
+.ui-keyboard-button {
+      min-height: 1.2em; 
+      min-width: 1.2em;
+      width: auto;
+      margin: .1em; 
+      cursor: pointer; 
+}
+@media(max-width: 1024px) {
+    .ui-keyboard span {
+        font-size: 16px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 1.2em;
+        min-width: 1.4em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 2px;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        position: static;
+    }
+}
+
+@media(max-width: 900px) {
+    .ui-keyboard {
+        position: static !important;
+    }
+
+    .ui-keyboard span {
+        font-size: 8px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 1.3em;
+        min-width: 1.2em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 0;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        position: static;
+    }
+}
+@media(max-width: 450px) {
+    .ui-keyboard {
+        position: static !important;
+    }
+
+    .ui-keyboard span {
+        font-size: 7px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 0.8em;
+        min-width: 0.7em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 0;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        font-size: 7px;
+        position: static;
+    }
+}
+
+.chat-line {
+    margin: 0px;
+}
+
+.expanded-row-content > *{
+    border: none;
+}
+.expanded-row-content:hover {
+    background-color: #EEF4FD;
+}
+.vhsshtml5_button_holder {
+    display: none !important;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+.chat-history-container {
+    overflow: auto;
+    height: 15vh;
+    min-height: 120px;
+}
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+}
+.avatar {
+    min-height: 400px;
+    width: 100%;
+}
+.toggle-row-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+.toggle-row {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.toggle-row:after {
+    content: '+';
+}
+.toggle-row.active:after {
+    content: '-';
+}
+.texttutor-input {
+    min-height: 150px;
+    width: 100%;
+}
+
+.textarea {
+    min-height: 150px;
+}
+
+.bstreeview .list-group-item:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
+
+.treeview {
+    overflow:auto;
+    max-height: 100%;
+}
+.modal-body {
+    max-height: 40vh;
+    overflow: auto;
+}
+.english-hidden[data-ui-keyboard-language="en"] {
+    display: none !important;
+}

@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BusinessServices\Enum\" />
+    <Folder Include="BusinessServices\Helpers\" />
+    <Folder Include="BusinessServices\Classes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\HTML\css\animate.min.css" />
+    <None Include="wwwroot\HTML\css\bootstrap.min.css" />
+    <None Include="wwwroot\HTML\css\materialdesignicons.min.css" />
+    <None Include="wwwroot\HTML\css\style.css" />
+    <None Include="wwwroot\HTML\dashboard\addUser.html" />
+    <None Include="wwwroot\HTML\dashboard\admin.html" />
+    <None Include="wwwroot\HTML\dashboard\assets\css\font-awesome.min.css" />
+    <None Include="wwwroot\HTML\dashboard\assets\css\style.css" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont.eot" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont.ttf" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont.woff" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\fontawesome-webfont_files\viewsource.css" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\FontAwesome.otf" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\glyphicons-halflings-regular.woff" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\MontserratLight.eot" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\MontserratLight.svg" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\MontserratLight.ttf" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\MontserratLight.woff" />
+    <None Include="wwwroot\HTML\dashboard\assets\fonts\MontserratLight.woff2" />
+    <None Include="wwwroot\HTML\dashboard\assets\images\1.png" />
+    <None Include="wwwroot\HTML\dashboard\assets\images\8.png" />
+    <None Include="wwwroot\HTML\dashboard\assets\images\sample.pdf" />
+    <None Include="wwwroot\HTML\dashboard\assets\images\smile.png" />
+    <None Include="wwwroot\HTML\dashboard\assets\images\user-1.png" />
+    <None Include="wwwroot\HTML\dashboard\assets\js\bootstrap.min.js" />
+    <None Include="wwwroot\HTML\dashboard\assets\js\jquery.min.js" />
+    <None Include="wwwroot\HTML\dashboard\assets\js\jquery.nanoscroller.min.js" />
+    <None Include="wwwroot\HTML\dashboard\assets\js\scripts.js" />
+    <None Include="wwwroot\HTML\dashboard\assets\js\sidebar.js" />
+    <None Include="wwwroot\HTML\dashboard\ressources.html" />
+    <None Include="wwwroot\HTML\fonts\materialdesignicons-webfont.eot" />
+    <None Include="wwwroot\HTML\fonts\materialdesignicons-webfont.svg" />
+    <None Include="wwwroot\HTML\fonts\materialdesignicons-webfont.ttf" />
+    <None Include="wwwroot\HTML\fonts\materialdesignicons-webfont.woff" />
+    <None Include="wwwroot\HTML\fonts\materialdesignicons-webfont.woff2" />
+    <None Include="wwwroot\HTML\images\favicon.ico" />
+    <None Include="wwwroot\HTML\images\footer.png" />
+    <None Include="wwwroot\HTML\images\footer1.jpg" />
+    <None Include="wwwroot\HTML\images\footer2.jpg" />
+    <None Include="wwwroot\HTML\images\footer3.jpg" />
+    <None Include="wwwroot\HTML\images\img-1.png" />
+    <None Include="wwwroot\HTML\images\img-2.png" />
+    <None Include="wwwroot\HTML\images\img-3.png" />
+    <None Include="wwwroot\HTML\images\img-4.png" />
+    <None Include="wwwroot\HTML\images\img-5.png" />
+    <None Include="wwwroot\HTML\images\logo.png" />
+    <None Include="wwwroot\HTML\images\one.png" />
+    <None Include="wwwroot\HTML\images\three.png" />
+    <None Include="wwwroot\HTML\images\two.png" />
+    <None Include="wwwroot\HTML\index.html" />
+    <None Include="wwwroot\HTML\js\app.js" />
+    <None Include="wwwroot\HTML\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\HTML\js\jquery.easing.min.js" />
+    <None Include="wwwroot\HTML\js\jquery.min.js" />
+    <None Include="wwwroot\HTML\js\wow.js" />
+    <None Include="wwwroot\HTML\login.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="MySqlConnector" Version="1.2.1" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>
