@@ -11,42 +11,50 @@ let contexts = [];
 let loadedScenes = [];
 var enPhrasebook = [
     {
-        text: "Parent 1",
+        text: "Common Phrases",
         selectable: false,
         selectedIcon: "glyphicon glyphicon-stop",
         nodes: [
             {
                 selectable: false,
                 selectedIcon: "glyphicon glyphicon-stop",
-                text: "Child 1",
-                nodes: [
-                    {
-                        text: "Grandchild 1"
-                    },
-                    {
-                        text: "Grandchild 2"
-                    }
-                ]
+                text: "How are you?"
+                //,
+                //nodes: [
+                //    {
+                //        text: "Grandchild 1"
+                //    },
+                //    {
+                //        text: "Grandchild 2"
+                //    }
+                //]
             },
             {
-                text: "Child 2"
+                text: "How are you doing?"
+            }
+            ,
+            {
+                text: "Good morning!"
+            }
+            ,
+            {
+                text: "Good evening!"
+            },
+            {
+                text: "Where you live?"
             }
         ]
     },
     {
-        text: "Parent 2"
+        text: "Shopping"
     },
     {
-        text: "Parent 3"
+        text: "New"
     },
     {
-        text: "Parent 4"
-    },
-    {
-        text: "Parent 5"
+        text: "Lessons"
     }
 ];
-
 var phrasebooks = {
     'en': enPhrasebook
 }
@@ -304,14 +312,23 @@ function initChat(
         context.updateTextarea();
     })
     $(exportToPdfButtonId).on('click', function() {
-        const firstName = window.prompt('Enter that side name:');
-        const secondName = window.prompt('Enter the other side name:');
+        const firstName = window.prompt('Please enter that Teacher name:');
+        const secondName = window.prompt('Please enter the Student name:');
         // playground requires you to assign document definition to a variable called dd
 
         let str = '';
         const messageKey = 'translatedText';
         const hiddenTextKey = 'sourceText';
         lines = [];
+        lines = lines.concat([
+            {
+                alignment: 'justify',
+                columns: [
+                    `${firstName}`,
+                    `${secondName}`,
+                ]
+            },
+            '\n']);
         for (let i = 0; i < context.messages.length; i++){
             const message = context.messages[i];
             const connectedMessage = context.connectedContext.messages[i];
@@ -319,25 +336,25 @@ function initChat(
             const fromLangInfo = languages.find(x => x.id == message.sourceLanguageId);
             const toLangInfo = languages.find(x => x.id == connectedMessage.translatedLanguageId);
             lines = lines.concat([
+                //{
+                //    alignment: 'justify',
+                //    columns: [
+                //        `from ${(isSent)? firstName : secondName}`,
+                //        `to ${(isSent)? secondName : firstName}`,
+                //    ]
+                //},
+                //{
+                //    alignment: 'justify',
+                //    columns: [
+                //        `${(isSent) ? firstName : secondName}` + fromLangInfo.text,
+                //        `${(isSent) ? secondName : firstName}` +toLangInfo.text
+                //    ]
+                //},
                 {
                     alignment: 'justify',
                     columns: [
-                        `from ${(isSent)? firstName : secondName}`,
-                        `to ${(isSent)? secondName : firstName}`,
-                    ]
-                },
-                {
-                    alignment: 'justify',
-                    columns: [
-                        fromLangInfo.text,
-                        toLangInfo.text
-                    ]
-                },
-                {
-                    alignment: 'justify',
-                    columns: [
-                        message['time'].toLocaleTimeString() + ' > ' + message[messageKey] + ' ' + (message.wasTranslated ? `(${message[hiddenTextKey]})` : ''),
-                        connectedMessage['time'].toLocaleTimeString() + ' > ' + connectedMessage[messageKey] + ' ' + (connectedMessage.wasTranslated ? `(${connectedMessage[hiddenTextKey]})` : '')
+                        message['time'].toLocaleTimeString() + ' > ' + message[messageKey] + ' ' + (message.wasTranslated ? `` : ''),
+                        connectedMessage['time'].toLocaleTimeString() + ' > ' + connectedMessage[messageKey] + ' ' + (connectedMessage.wasTranslated ? `` : '')
                     ]
                 },
                 '\n'
@@ -345,7 +362,7 @@ function initChat(
         };
         var dd = {
             content: [
-                'The two can talk transcription:',
+                'The two can talk transcription between ' + firstName + ' & ' + secondName+'\n\n',
             ].concat(lines),
             styles: {
                 header: {

@@ -75,7 +75,7 @@ function initTranslator(
     });
     context.sayText = function(text, languageId) {
         selectScene(context.sceneRef);
-        sayText(text, 2, languageId, 2);
+        sayText(text, 1, languageId, 2);
     }
     context.addMessage = function(message, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
         message.sourceMessage = sourceText;

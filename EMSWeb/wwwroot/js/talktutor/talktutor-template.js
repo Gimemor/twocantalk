@@ -7,7 +7,7 @@ var chatTemplate = '\
                 \
                 <div class="fromLanguageSelectorContainer">\
                     <label for="<%=fromLanguageSelectorId%>">From: </label>\
-                    <select class="languageSelector" id="<%=fromLanguageSelectorId%>">\
+                    <select class="languageSelector" disabled id="<%=fromLanguageSelectorId%>">\
                     </select>\
                 </div>\
                 <div class="toLanguageSelectorContainer">\
@@ -24,7 +24,7 @@ var chatTemplate = '\
         </div>\
         <div class="row pb-8">\
             <div class="col-lg-12">\
-                <textarea id="<%=userOutputId%>" class="chat-input textarea"></textarea>\
+                <textarea id="<%=userOutputId%>" class="chat-input textarea" disabled style="background-color: aliceblue;"></textarea>\
             </div> \
         </div>\
         <div class="row pb-8">\

@@ -31,7 +31,7 @@ var chatTemplate = '\
         </div>\
         <div class="row pb-8">\
             <div class="col-lg-12">\
-                <input id="<%=userInputId%>" class="chat-input">\
+                <input id="<%=userInputId%>" class="chat-input textarea">\
             </div> \
         </div>\
         <div class="row pb-8">\
