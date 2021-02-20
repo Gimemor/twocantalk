@@ -213,7 +213,7 @@ function initKeyboard(languageInfo, inputSelector, keyboardContainer) {
             // input/textarea it is attached to. This option works
             // best when the input container doesn't have a set width
             // and when the "tabNavigation" option is true
-            appendLocally: true,
+            appendLocally: false,
             usePreview: false,
             autoAccept: true,
             // When appendLocally is false, the keyboard will be appended

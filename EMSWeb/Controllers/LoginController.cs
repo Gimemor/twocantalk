@@ -52,7 +52,7 @@ namespace EMSWeb.Controllers
         {
             try
             {
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
+                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=emsdb; UID=root; PWD=Mik70525"))
                 {
                     using (MySqlCommand cmd = new MySqlCommand($"SELECT username  FROM users where username = '{uname}' and password_plain = '{pass}';"))
                     {

@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "_LayoutWithSidebar";
+    ViewBag.Page = "TalkTutor";
+}
+
+@section Scripts {
+    <!-- favicon -->
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <!-- Styles -->
+    <link href="@Url.Content("~/HTML/keyboard/css/keyboard-basic.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/HTML/dashboard/assets/css/font-awesome.min.css")" rel="stylesheet">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/bootstrap-treeview.min.css" rel="stylesheet">
+    <link href="~/HTML/dashboard/assets/css/style.css" rel="stylesheet">
+    <link href="~/HTML/css/twocantalk.css" rel="stylesheet">
+    <link href="~/HTML/css/expandable-table.css" rel="stylesheet">
+    <script src="~/HTML/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/purify.min.js"></script>
+    <script src="~/js/html2canvas.min.js"></script>
+    <script src="~/js/pdfmake.min.js"></script>
+    <script src="~/js/vfs_fonts.js"></script>
+    <script src="~/js/bootstrap-treeview.min.js"></script>
+    <script type="text/javascript" src="~/HTML/keyboard/js/jquery.keyboard.js"></script>
+    <script type="text/javascript" src="https://vhss-d.oddcast.com/vhost_embed_functions_v4.php?acc=1015607&js=0"></script>
+    <script type="text/javascript" src="~/js/lodash.js"></script>
+    <script type="text/javascript" src="~/js/keyboard.js"></script>
+
+    <script type="text/javascript" src="~/js/talktutor/talktutor-template.js"></script>
+    <script type="text/javascript" src="~/js/talktutor/talktutor.js"></script>
+
+
+    <script type="text/javascript">
+        var chatsDefinitions = [
+            {
+                placeholderSelector: '#firstChatPlaceholder',
+                userInputId: 'firstUserInput',
+                userOutputId: 'firstUserOutput',
+                keyboardContainerId: 'firstKeyboardContainer',
+                fromLanguageSelectorId: 'fromLanguageSelector',
+                toLanguageSelectorId: 'toLanguageSelector',
+            }
+        ]
+    </script>
+}
+
+<div class="content-wrap">
+    <div class="main">
+        <div class="container-fluid">
+            <div id="main-content">
+                <div class="row d-flex flex-row p-8 pt-0">
+                    <div class="p-8 col-md-6" id="firstChatPlaceholder">
+                        <div class="avatar-placeholder">
+                            <div class="avatar">
+                                <script>
+                                    chatsDefinitions[0].scene = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018970, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
+                                    createChat([chatsDefinitions[0]]);
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/HTML/dashboard/assets/js/scripts.js"></script>
+<script src="~/HTML/dashboard/assets/js/sidebar.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+<partial name="../Shared/KeyboardView.cshtml">
+
+<script>
+    $(document).ready(function () {
+        var context = initTalkTutor(chatsDefinitions);
+        $(".ui-keyboard").hide();
+    });
+</script>

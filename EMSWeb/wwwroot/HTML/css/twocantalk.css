@@ -47,15 +47,24 @@
 .ui-keyboard {
      position: static !important;
 }
+.grayed {
+    background: lightgray !important;
+}
 
+.grayed:hover {
+    background: lightcyan;
+}
 .ui-keyboard span { font-size: 1em; }
-
+.ui-keyboard-keyset {
+    width: 100%;
+}
 .ui-keyboard-button {
-      min-height: 1.2em; 
-      min-width: 1.2em;
-      width: auto;
-      margin: .1em; 
-      cursor: pointer; 
+    min-height: 1.2em;
+    min-width: 1.2em;
+    width: auto;
+    width: calc(100% / 17);
+    margin: .1em;
+    cursor: pointer;
 }
 @media(max-width: 1024px) {
     .ui-keyboard span {
@@ -213,4 +222,24 @@
 }
 .english-hidden[data-ui-keyboard-language="en"] {
     display: none !important;
+}
+
+.form-control > input {
+    border: none;
+}
+.form-control > input:focus {
+    border: none;
+    outline: none;
+}
+.form-control.textarea {
+    height: auto;
+    border: 2px solid lightgray;
+    cursor: text;
+}
+.form-control.textarea:hover {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+.toggle-row-container button {
+    background: lightgray;
+    border-color: darkgray;
 }

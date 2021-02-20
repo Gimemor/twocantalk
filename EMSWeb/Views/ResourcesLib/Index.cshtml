@@ -17,7 +17,6 @@
     <link rel="shortcut icon" href="../images/favicon.ico">
     <!-- Styles -->
     <link href="~/css/assets/css/font-awesome.min.css" rel="stylesheet">
-    <link href="~/css/assets/css/themify-icons.css" rel="stylesheet">
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/assets/css/style.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -85,10 +84,10 @@
                             <li><a href="#" class="tchClick"><i class="fa fa-question-circle-o"></i>Teacher's Support Documents</a></li>
                         </ul>
                     </li>
-                    <li><a href="#" class="sidebar-sub-toggle"><i class="fa fa-file-text-o"></i> Text Tutor </a></li>
-                    <li><a href="#" class="sidebar-sub-toggle"><i class="fa fa-commenting-o"></i>  Talking Tutor </a></li>
-                    <li><a href="#"><i class="fa fa-comments-o"></i> Twocan Talk </a></li>
-                    <li><a href="#"><i class="fa fa-address-book-o"></i> Pharesebok Manager</a></li>
+                    <li class="@((ViewBag.Page == "TextTutor")? "active" : "")"><a href="@Url.ActionLink("Index", "TextTutor")"><i class="fa fa-file-text-o"></i> Text Tutor </a></li>
+                    <li class="@((ViewBag.Page == "TalkTutor")? "active" : "")"><a href="@Url.ActionLink("Index", "TalkTutor")"><i class="fa fa-commenting-o"></i>  Talking Tutor </a></li>
+                    <li class="@((ViewBag.Page == "TwoCanTalk")? "active" : "")"><a href="@Url.ActionLink("Index", "TwoCanTalk")"><i class="fa fa-comments-o"></i> Twocan Talk </a></li>
+                    <li><a href="@Url.ActionLink("Index", "TwoCanTalk")"><i class="fa fa-address-book-o"></i> Pharesebok Manager</a></li>
                     <li><a href="@Url.ActionLink("Index","Index")"><i class="fa fa-sign-out"></i> Logout</a></li>
                 </ul>
             </div>

@@ -13,7 +13,7 @@ var chatTemplate = '\
                 <div><button title="Export to PDF" type="button" class="btn btn-light" id="<%=exportToPdfButtonId%>"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button></div>\
                 <div><button title="Toggle reverse translation" type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off"  id="<%=toggleTranslationButtonId%>"><i class="fa fa-repeat" aria-hidden="true"></i></button></div>\
                 <div><button title="Hide english keyboard" type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off"  id="<%=toggleKeyboardId%>"><i class="fa fa-keyboard-o" aria-hidden="true"></i></button></div>\
-                <div class="pl-8"><button title="Open pharsebook" type="button" class="btn btn-light" id="<%=openPharsebookButtonId%>"> <i class="fa fa-book" aria-hidden="true"></i> Phrasebook</button></div>\
+                <% if (openPharsebookButtonId.length > 0) { %> <div class="pl-8"><button title="Open pharsebook" type="button" class="btn btn-light" id="<%=openPharsebookButtonId%>"> <i class="fa fa-book" aria-hidden="true"></i> Phrasebook</button></div> <% } %>\
                 <div class="languageSelectorContainer">\
                     <select class="languageSelector" id="<%=languageSelectorId%>">\
                     </select>\
@@ -31,7 +31,9 @@ var chatTemplate = '\
         </div>\
         <div class="row pb-8">\
             <div class="col-lg-12">\
-                <input id="<%=userInputId%>" class="chat-input textarea">\
+                <div class="form-control textarea">\
+                    <input id="<%=userInputId%>" class="chat-input">\
+                </div>\
             </div> \
         </div>\
         <div class="row pb-8">\
