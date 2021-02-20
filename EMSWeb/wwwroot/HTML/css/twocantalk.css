@@ -61,7 +61,7 @@
 .ui-keyboard-button {
     min-height: 1.2em;
     min-width: 1.2em;
-    width: auto;
+    
     width: calc(100% / 17);
     margin: .1em;
     cursor: pointer;
