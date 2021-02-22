@@ -215,6 +215,7 @@
 .treeview {
     overflow:auto;
     max-height: 100%;
+    width: 100%;
 }
 .modal-body {
     max-height: 40vh;

@@ -1,8 +1,6 @@
 ﻿    var enPhrasebook = [
         {
-            text: "Common Phrases",
-            selectable: false,
-            selectedIcon: "glyphicon glyphicon-stop",
+
             nodes: [
                 {
                     selectable: false,
@@ -55,35 +53,65 @@ class PhrasebookController {
     get phrasebookTreeId() { return '#' + this.phrasebookDefinition.phrasebookTreeId; }
     get phrasebookModalId() { return '#' + this.phrasebookDefinition.phrasebookModalId; }
 
-    getTree = (languageId)  => {
+    getTree2= (languageId)  => {
         const from = languages.find(x => x.id == languageId);
         if (phrasebooks[from.language]) {
             return phrasebooks[from.language];
         }
         return [];
     }
+    parseTree(rawTree) {
+        if (!rawTree) {
+            return;
+        }
+        const root = {
+            selectedIcon: "glyphicon glyphicon-stop",
+            text: rawTree.name,
+            selectable: false,
+            id: rawTree.id
+        };
+        root.nodes = []
+        if (rawTree.childLists.length > 0) {
+            root.nodes = root.nodes.concat(rawTree.childLists.map(child => this.parseTree(child)));
+        }
+        if (rawTree.phrases.length > 0) {
+            root.nodes = root.nodes.concat(rawTree.phrases.map(phrase => {
+                return {
+                    text: phrase.content,
+                    id: phrase.id
+                }
+            }));
+        }
+        return root;
+    }
 
     showPhrasebook = (languageId) => {
         // Do something to each element here.
-        const tree = this.getTree(languageId);
-        if (tree.length == 0) {
-            alert('Phrasebook is empty');
-            return;
-        }
-        $(this.phrasebookTreeId).treeview({
-            data: tree,
-            collapseIcon: 'fa fa-minus',
-            checkedIcon: 'fa fa-check',
-            expandIcon: 'fa fa-plus'
-        });
-        $('.bstreeview .list-group-item').on('click', (event) => {
+        getTree(languageId).done((rawTree) => {
+            if (rawTree.length == 0) {
+                alert('Phrasebook is empty');
+                return;
+            }
+
+            this.tree = this.parseTree(rawTree);
+            $(this.phrasebookTreeId).treeview({
+                data: this.tree.nodes,
+                collapseIcon: 'fa fa-minus',
+                checkedIcon: 'fa fa-check-square-o',
+                uncheckedIcon: 'fa fa-square-o',
+                expandIcon: 'fa fa-plus',
+                showCheckbox: true
+            });
+            $('.bstreeview .list-group-item').on('click', (event) => {
+            })
+            $(this.phrasebookTreeId).on('nodeSelected', (event, data) => {
+                // close modal
+                $(this.phrasebookModalId).modal('hide');
+                this.phraseSelected.next(data.text);
+            });
+            $(this.phrasebookModalId).modal({});
         })
-        $(this.phrasebookTreeId).on('nodeSelected', (event, data) => {
-            // close modal
-            $(this.phrasebookModalId).modal('hide');
-            this.phraseSelected.next(data.text);
-        });
-        $(this.phrasebookModalId).modal({});
+        
     }
     phraseSelected = new rxjs.Subject();
 }

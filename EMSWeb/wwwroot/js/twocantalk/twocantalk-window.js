@@ -187,7 +187,6 @@ class ChatContext {
     }).bind(this)
 
     updateTextarea = function() {
-        console.log('updating chat')
         const el = $(this.chatHistoryId);
         let str = '';
         for (let i = 0; i < this.messages.length; i++) {
@@ -273,6 +272,7 @@ class ChatContext {
 
     handleToggleTranslationClick = () => {
         this.showTranslatedText = !this.showTranslatedText;
+        $(this.toggleTranslationButtonId).toggleClass('active', this.showTranslatedText);
         this.updateTextarea();
     }
 
@@ -353,7 +353,9 @@ class ChatContext {
     }
 
     handleToggleKeyboardClick = () => {
-        $(this.keyboard).getkeyboard().$keyboard.toggleClass('english-hidden');
+        $(this.toggleKeyboardId).toggleClass('active');
+        const val = $(this.toggleKeyboardId).hasClass('active');
+        $(this.keyboard).getkeyboard().$keyboard.toggleClass('english-hidden', val);
     }
 
     handleOpenPhrasebookClick = () => {

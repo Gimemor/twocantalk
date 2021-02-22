@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EMSWeb.BusinessServices.Services;
+using EMSWeb.BusinessServices.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +29,7 @@ namespace EMSWeb
         {
             services.AddControllersWithViews();
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddScoped<IPhrasebookService, PhrasebookService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

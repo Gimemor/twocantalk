@@ -15,7 +15,6 @@
     <Folder Include="BusinessServices\Enum\" />
     <Folder Include="BusinessServices\Helpers\" />
     <Folder Include="BusinessServices\Classes\" />
-    <Folder Include="Views\Phrasebook\" />
   </ItemGroup>
 
   <ItemGroup>
