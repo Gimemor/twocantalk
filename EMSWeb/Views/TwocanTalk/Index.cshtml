@@ -27,13 +27,18 @@
     <script type="text/javascript" src="https://vhss-d.oddcast.com/vhost_embed_functions_v4.php?acc=1015607&js=0"></script>
     <script type="text/javascript" src="~/js/lodash.js"></script>
     <script type="text/javascript" src="~/js/keyboard.js"></script>
+    <script type="text/javascript" src="~/js/phrasebook/phrasebook-template.js"></script>
+    <script type="text/javascript" src="~/js/phrasebook/phrasebook.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@@reactivex/rxjs@6.6.3/dist/global/rxjs.umd.js"></script>
     <script type="text/javascript" src="~/js/twocantalk/twocantalk-template.js"></script>
     <script type="text/javascript" src="~/js/twocantalk/twocantalk.js"></script>
+    <script type="text/javascript" src="~/js/twocantalk/twocantalk-logic.js"></script>
 
     <script type="text/javascript">
         var chatsDefinitions = [
             {
-                placeholderSelector: '#firstChatPlaceholder',
+                sceneId: 0,
+                placeholderSelector: 'firstChatPlaceholder',
                 userInputId: 'firstUserInput',
                 keyboardContainerId: 'firstKeyboardContainer',
                 chatHistoryId: 'firstChatHistory',
@@ -43,14 +48,18 @@
                 repeatLastSentenceButtonId: 'firstRepeatLastSentenceButton',
                 toggleTranslationButtonId: 'firstToggleTranslationButton',
                 exportToPdfButtonId: 'firstExportToPdfButton',
-                openPharsebookButtonId: 'firstOpenPhrasebookButton',
-                phrasebookModalId: 'phrasebookModal',
-                phrasebookTreeId: 'phrasebookTree',
+                phrasebook: {
+                    openPhrasebookButtonId: 'firstOpenPhrasebookButton',
+                    phrasebookModalId: 'phrasebookModal',
+                    phrasebookLabel: 'phrasebookLabel',
+                    phrasebookTreeId: 'phrasebookTree',
+                },
                 toggleKeyboardId: 'firstToggleKeyboard',
                 genderId: GENDER_ID.female
             },
             {
-                placeholderSelector: '#secondChatPlaceholder',
+                sceneId: 1,
+                placeholderSelector: 'secondChatPlaceholder',
                 userInputId: 'secondUserInput',
                 keyboardContainerId: 'secondKeyboardContainer',
                 chatHistoryId: 'secondChatHistory',
@@ -60,9 +69,7 @@
                 repeatLastSentenceButtonId: 'secondRepeatLastSentence',
                 toggleTranslationButtonId: 'secondToggleTranslationButton',
                 exportToPdfButtonId: 'secondExportToPdfButton',
-                openPharsebookButtonId: '',
-                phrasebookModalId: 'phrasebookModal',
-                phrasebookTreeId: 'phrasebookTree',
+                phrasebook: false,
                 toggleKeyboardId: 'secondToggleKeyboard',
                 genderId: GENDER_ID.male
             }
@@ -75,8 +82,8 @@
             <div class="avatar-placeholder">
                 <div class="avatar">
                     <script>
-                        chatsDefinitions[0].scene = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018970, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
-                        createChat([chatsDefinitions[0]]);
+                        chatsDefinitions[0].sceneRef = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018970, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
+                        //createChat([chatsDefinitions[0]]);
                     </script>
                 </div>
             </div>
@@ -85,8 +92,8 @@
             <div class="avatar-placeholder">
                 <div class="avatar">
                     <script>
-                        chatsDefinitions[1].scene = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018971, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
-                        createChat([chatsDefinitions[1]]);
+                        chatsDefinitions[1].sceneRef = AC_VHost_Embed(1015607, 300, 400, '', 1, 1, 2018971, 0, 1, 0, '553d1bcf769c9da8fc2124b09528003a', 0);
+                        //createChat([chatsDefinitions[1]]);
                     </script>
                 </div>
             </div>
@@ -104,37 +111,11 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="phrasebookModal" tabindex="-1" role="dialog" aria-labelledby="phrasebookModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="phrasebookModalLabel">Phrasebook</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="phrasebookTree"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+<partial name="../Shared/KeyboardView.cshtml" />`
 <script>
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
-
-<partial name="../Shared/KeyboardView.cshtml">
-<script>
-
-    $(document).ready(function () {
-        var context = initTct(chatsDefinitions);
+        startTwoCanTalk();
     });
 </script>
 

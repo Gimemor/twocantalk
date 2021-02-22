@@ -1,6 +1,6 @@
 
-var scene1; 
-var chatTemplate = '\
+(function ($) {
+    var chatTemplate = '\
    <div class="p-8 pt-0">\
         <div class="row logo-content">\
             <div class="col-lg-6">\
@@ -13,7 +13,13 @@ var chatTemplate = '\
                 <div><button title="Export to PDF" type="button" class="btn btn-light" id="<%=exportToPdfButtonId%>"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button></div>\
                 <div><button title="Toggle reverse translation" type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off"  id="<%=toggleTranslationButtonId%>"><i class="fa fa-repeat" aria-hidden="true"></i></button></div>\
                 <div><button title="Hide english keyboard" type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off"  id="<%=toggleKeyboardId%>"><i class="fa fa-keyboard-o" aria-hidden="true"></i></button></div>\
-                <% if (openPharsebookButtonId.length > 0) { %> <div class="pl-8"><button title="Open pharsebook" type="button" class="btn btn-light" id="<%=openPharsebookButtonId%>"> <i class="fa fa-book" aria-hidden="true"></i> Phrasebook</button></div> <% } %>\
+                <% if (!!phrasebook) { %>\
+                    <div class="pl-8">\
+                        <button title = "Open pharsebook" type = "button" class="btn btn-light" id="<%=phrasebook.openPhrasebookButtonId%>" >\
+                            <i class="fa fa-book" aria-hidden="true"></i> Phrasebook\
+                        </button >\
+                    </div >\
+                <% } %>\
                 <div class="languageSelectorContainer">\
                     <select class="languageSelector" id="<%=languageSelectorId%>">\
                     </select>\
@@ -45,10 +51,12 @@ var chatTemplate = '\
 
 
 
-function createChat(chatDefinitions) {
-    chatDefinitions.forEach(chatDefinition => {
-        $(chatDefinition.placeholderSelector).append(
-            _.template(chatTemplate)(chatDefinition)
-        );
-    });
-}
+    $.fn.twocantalk = function (chatDefinition) {
+        return this.each(function() {
+            $(this).append(
+                _.template(chatTemplate)(chatDefinition)
+            );
+        });
+    }
+
+})(jQuery);
