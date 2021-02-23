@@ -18,8 +18,8 @@
                         <div><button title="Delete" type="button" class="btn btn-light" id="<%=deleteButtonId%>"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </button></div>\
                     </div>\
                 </div>\
-                <div class="row pb-8 pt-8">\
-                    <div id="<%= phrasebookTreeId %>"></div>\
+                <div class="row pb-8 pt-8" style="display: contents">\
+                    <div class="list-container"><div id="<%= phrasebookTreeId %>"></div></div>\
                 </div>\
             </div>\
             <div class="modal-footer">\

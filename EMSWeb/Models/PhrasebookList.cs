@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace EMSWeb.Models
 {
 	[DataContract]
-	public class PhrasebookPhrase {
+	public class PhrasebookPhrase 
+	{
 		[DataMember]
 		public uint Id { get; set; }
 
@@ -55,5 +56,48 @@ namespace EMSWeb.Models
 
 		[DataMember]
 		public List<PhrasebookPhrase> Phrases { get; set; }
+	}
+
+	[DataContract]
+	public class DeletePhrasebookDto 
+	{
+		[DataMember]
+		public int Id { get; set; }
+
+		[DataMember]
+		public bool IsList { get; set; }
+	}
+
+	[DataContract]
+	public class CreatePhraseDto
+	{ 
+		[DataMember]
+		public string Text { get; set; }
+
+		[DataMember]
+		public int ListId { get; set; }
+	}
+
+	[DataContract] 
+	public class CreateListDto
+	{
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public int ParentId { get; set; }
+	}
+
+	[DataContract]
+	public class ModifyNodeDto 
+	{
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public int Id { get; set; }
+
+		[DataMember]
+		public bool IsList { get; set; }
 	}
 }

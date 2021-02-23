@@ -32,6 +32,9 @@
 }
 .chat-input {
     width: 100%;
+    min-height: 150px;
+    height: 100% !important;
+    border: none;
 }
 .languageSelectorContainer {
     flex-grow: 2;
@@ -219,7 +222,13 @@
 }
 .modal-body {
     max-height: 40vh;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+.list-container {
+    overflow: hidden;
+    overflow-y: auto;
+    height: auto;
 }
 .english-hidden[data-ui-keyboard-language="en"] {
     display: none !important;

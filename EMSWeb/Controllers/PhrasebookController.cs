@@ -38,8 +38,21 @@ namespace EMSWeb.Controllers
 
         // POST: api/Phrasebook
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task Post([FromBody] CreatePhraseDto value)
         {
+             await PhrasebookService.CreatePhrase(value);
+        }
+
+        [HttpPost("category")]
+        public async Task PostCategory([FromBody] CreateListDto value)
+        {
+            await PhrasebookService.CreateList(value);
+        }
+
+        [HttpPost("modify")]
+        public async Task Modify([FromBody] ModifyNodeDto node) 
+        {
+            await PhrasebookService.Modify(node);
         }
 
         // PUT: api/Phrasebook/5
@@ -48,10 +61,11 @@ namespace EMSWeb.Controllers
         {
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE: api/Phrasebook/delete
+        [HttpPost("delete")]
+        public async Task Delete([FromBody] DeletePhrasebookDto[] ids)
         {
+            await PhrasebookService.Delete(ids);
         }
     }
 }

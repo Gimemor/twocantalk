@@ -5,13 +5,17 @@ using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EMSWeb.BusinessServices.Services
 {
 	public class PhrasebookService : IPhrasebookService
 	{
-		public async Task<PhrasebookList> GetPhrasebook()
+        //TODO inject connectionString from appsetings
+        static string connectionString = "Server=localhost; Database=emsdb; UID=root; PWD=Mik70525";
+
+        public async Task<PhrasebookList> GetPhrasebook()
 		{
             var list = new PhrasebookList() { 
                 Id = 0,
@@ -20,11 +24,9 @@ namespace EMSWeb.BusinessServices.Services
             };
             try
             {
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=emsdb; UID=root; PWD=Mik70525"))
                 {
-                    await GetPhrasesForList(con, list);
-                    await GetChildren(con, list);
-                    con.Close();
+                    await GetPhrasesForList(list);
+                    await GetChildren(list);
                 }
             }
             catch (Exception ex)
@@ -34,14 +36,133 @@ namespace EMSWeb.BusinessServices.Services
             return list;
         }
 
-        private async Task GetChildren(MySqlConnection con, PhrasebookList parent) {
+        public async Task Delete(DeletePhrasebookDto[] toDelete) {
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(connectionString)) 
+                {
+                    await con.OpenAsync();
+                    var phrasesIds = toDelete.Where(x => !x.IsList).Select(x => x.Id).ToList();
+                    if(phrasesIds.Any()) 
+                    {
+                        var phrasesIdsString = phrasesIds.Select(x => x.ToString()).Aggregate((value, acc) => acc + ", " + value);
+                        phrasesIdsString = phrasesIdsString.Trim();
+                        if (phrasesIdsString[^1] == ',')
+                        {
+                            phrasesIdsString = phrasesIdsString.Substring(0, phrasesIdsString.Length - 1);
+                        }
+                        var commandText = $"UPDATE phrases SET deleted = 1 WHERE id IN({phrasesIdsString})";
+                        using (var cmd = new MySqlCommand(commandText, con))
+                        {
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    var listsIds = toDelete.Where(x => x.IsList).Select(x => x.Id).ToList();
+                    if(listsIds.Any()) 
+                    {
+                        var listsIdsString = listsIds.Select(x => x.ToString()).Aggregate((acc, value) => acc + ", " + value);
+                        listsIdsString = listsIdsString.Trim();
+                        if (listsIdsString[^1] == ',')
+                        {
+                            listsIdsString = listsIdsString.Substring(0, listsIdsString.Length - 1);
+                        }
+                        var commandText = $"UPDATE phrase_lists SET deleted = 1 WHERE id IN({listsIdsString})";
+                        using (var cmd = new MySqlCommand(commandText, con))
+                        {
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+                    await con.CloseAsync();
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task CreatePhrase(CreatePhraseDto createPhraseDto) 
+        {
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    var commandText =
+                        $"INSERT INTO phrases(phrase_list_id, content, sort_order, deleted, created_by) " +
+                        $"VALUES({createPhraseDto.ListId}, '{createPhraseDto.Text}', 1, 0, 1)";
+                    using (var cmd = new MySqlCommand(commandText, con))
+                    {
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                    await con.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public async Task CreateList(CreateListDto createListDto)
+        {
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    var commandText =
+                        $"INSERT INTO phrase_lists(created_by, name, sort_order, org_name, deleted, parent_id)" +
+                        $"VALUES(1, '{createListDto.Name}', 1, 'DEFAULT', 0, {createListDto.ParentId})";
+                    using (var cmd = new MySqlCommand(commandText, con))
+                    {
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                    await con.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+        public async Task Modify(ModifyNodeDto modifyNodeDto)
+        {
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    var commandText = modifyNodeDto.IsList ?
+                        $"UPDATE phrase_lists SET name = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'" :
+                        $"UPDATE phrases SET content = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'";
+                    using (var cmd = new MySqlCommand(commandText, con))
+                    {
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                    await con.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async Task GetChildren(PhrasebookList parent) 
+        {
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
                     $"SELECT id, name FROM phrase_lists WHERE parent_id = {parent.Id} AND deleted = 0 ORDER BY sort_order;"
                 ))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = con;
-                con.Open();
+                await con.OpenAsync();
+
                 // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
                 var d = await cmd.ExecuteReaderAsync();
                 if (d.HasRows)
@@ -53,23 +174,25 @@ namespace EMSWeb.BusinessServices.Services
                             Id = (uint)d["id"],
                             Name  = d["name"].ToString(),
                         };
-                        await GetChildren(con, child);
-                        await GetPhrasesForList(con, child);
+                        await GetChildren(child);
+                        await GetPhrasesForList(child);
                         parent.ChildLists.Add(child);
                     }
                 }
+                await con.CloseAsync();
             }
         }
 
-        private async Task GetPhrasesForList(MySqlConnection con, PhrasebookList parent) 
+        private async Task GetPhrasesForList(PhrasebookList parent) 
         {
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
-                $"SELECT id, phrase_list_id, content FROM phrases WHERE deleted = 0 AND phrase_list_id = {parent.ParentId} ORDER BY sort_order"
+                $"SELECT id, phrase_list_id, content FROM phrases WHERE deleted = 0 AND phrase_list_id = {parent.Id} ORDER BY sort_order"
             ))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = con;
-                con.Open();
+                await con.OpenAsync();
                 // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
                 var d = await cmd.ExecuteReaderAsync();
                 if (d.HasRows)
@@ -84,8 +207,9 @@ namespace EMSWeb.BusinessServices.Services
                             });
                     }
                 }
+                await con.CloseAsync();
             }
         }
-        
-	}
+
+    }
 }
