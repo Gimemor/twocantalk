@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_LayoutWithSidebar";
+    ViewBag.Page = "PhrasebookManager";
+}
+
+@section Scripts {
+    <!-- favicon -->
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <!-- Styles -->
+    <link href="@Url.Content("~/HTML/keyboard/css/keyboard-basic.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/HTML/dashboard/assets/css/font-awesome.min.css")" rel="stylesheet">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/bootstrap-treeview.min.css" rel="stylesheet">
+    <link href="~/HTML/dashboard/assets/css/style.css" rel="stylesheet">
+    <link href="~/HTML/css/twocantalk.css" rel="stylesheet">
+    <link href="~/HTML/css/expandable-table.css" rel="stylesheet">
+    <script src="~/HTML/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/purify.min.js"></script>
+    <script src="~/js/html2canvas.min.js"></script>
+    <script src="~/js/pdfmake.min.js"></script>
+    <script src="~/js/vfs_fonts.js"></script>
+    <script src="~/js/bootstrap-treeview.min.js"></script>
+    <script type="text/javascript" src="~/HTML/js/translate.js"></script>
+    <script type="text/javascript" src="~/HTML/keyboard/js/jquery.keyboard.js"></script>
+    <script type="text/javascript" src="https://vhss-d.oddcast.com/vhost_embed_functions_v4.php?acc=1015607&js=0"></script>
+    <script type="text/javascript" src="~/js/lodash.js"></script>
+    <script type="text/javascript" src="~/js/keyboard.js"></script>
+
+    <script type="text/javascript" src="~/js/phrasebook/phrasebook-manager-template.js"></script>
+    <script type="text/javascript" src="~/js/phrasebook/phrasebook-service.js"></script>
+    <script type="text/javascript" src="~/js/phrasebook/phrasebook.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@@reactivex/rxjs@6.6.3/dist/global/rxjs.umd.js"></script>
+
+    <script type="text/javascript">
+        var viewDefinition =
+               {
+                    openPhrasebookButtonId: 'firstOpenPhrasebookButton',
+                    phrasebookModalId: null,
+                    phrasebookLabel: 'phrasebookLabel',
+                    phrasebookTreeId: 'phrasebookTree',
+                    addCategoryButtonId: 'addCategoryButton',
+                    addPhraseButtonId: 'addPhraseButton',
+                    modifyButtonId: 'modifyButton',
+                    deleteButtonId: 'deleteButton'
+                }
+    </script>
+}
+<div id="main-content">
+      <div id="phrasebookModal">
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#phrasebookModal').phrasebook(viewDefinition);
+        const firstPhrasebook = initPhrasebook(viewDefinition);
+        firstPhrasebook.showPhrasebook();
+    });
+</script>
+

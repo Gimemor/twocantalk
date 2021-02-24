@@ -1,54 +1,9 @@
-﻿    var enPhrasebook = [
-        {
-
-            nodes: [
-                {
-                    selectable: false,
-                    selectedIcon: "glyphicon glyphicon-stop",
-                    text: "How are you?"
-                    //,
-                    //nodes: [
-                    //    {
-                    //        text: "Grandchild 1"
-                    //    },
-                    //    {
-                    //        text: "Grandchild 2"
-                    //    }
-                    //]
-                },
-                {
-                    text: "How are you doing?"
-                }
-                ,
-                {
-                    text: "Good morning!"
-                }
-                ,
-                {
-                    text: "Good evening!"
-                },
-                {
-                    text: "Where you live?"
-                }
-            ]
-        },
-        {
-            text: "Shopping"
-        },
-        {
-            text: "New"
-        },
-        {
-            text: "Lessons"
-        }
-    ];
-    var phrasebooks = {
-        'en': enPhrasebook
-}
-
-class PhrasebookController {
+﻿class PhrasebookController {
     constructor(phrasebookDefinition) {
         this.phrasebookDefinition = phrasebookDefinition;
+
+        // todo move modal control out of this controller
+        this.isModal = !!phrasebookDefinition.phrasebookModalId
     }
     get phrasebookTreeId() { return '#' + this.phrasebookDefinition.phrasebookTreeId; }
     get phrasebookModalId() { return '#' + this.phrasebookDefinition.phrasebookModalId; }
@@ -56,13 +11,7 @@ class PhrasebookController {
     get addPhraseButtonId() { return '#' + this.phrasebookDefinition.addPhraseButtonId; }
     get addCategoryButtonId() { return '#' + this.phrasebookDefinition.addCategoryButtonId; }
     get modifyButtonId() { return '#' + this.phrasebookDefinition.modifyButtonId; }
-    getTree2= (languageId)  => {
-        const from = languages.find(x => x.id == languageId);
-        if (phrasebooks[from.language]) {
-            return phrasebooks[from.language];
-        }
-        return [];
-    }
+   
     parseTree(rawTree) {
         if (!rawTree) {
             return;
@@ -88,6 +37,8 @@ class PhrasebookController {
         }
         return root;
     }
+
+
     setTree = (rawTree) => {
         if (rawTree.length == 0) {
             alert('Phrasebook is empty');
@@ -107,7 +58,9 @@ class PhrasebookController {
         })
         $(this.phrasebookTreeId).on('nodeSelected', (event, data) => {
             // close modal
-            $(this.phrasebookModalId).modal('hide');
+            if (this.isModal) {
+                $(this.phrasebookModalId).modal('hide');
+            }
             this.phraseSelected.next(data.text);
         });
         let handleButtonState = (event, data) => {
@@ -117,9 +70,12 @@ class PhrasebookController {
         }
         $(this.phrasebookTreeId).on('nodeChecked', handleButtonState);
         $(this.phrasebookTreeId).on('nodeUnchecked', handleButtonState);
-        $(this.phrasebookModalId).modal({});
+        if (this.isModal) {
+            $(this.phrasebookModalId).modal({});
+        }
         $(this.phrasebookTreeId).trigger('nodeChecked');
     }
+
     showPhrasebook = (languageId) => {
         // Do something to each element here.
         getTree(languageId).done((rawTree) => this.setTree(rawTree));
@@ -153,6 +109,8 @@ class PhrasebookController {
             createPhrase(text, parentId);
             getTree(languageId).done((rawTree) => this.setTree(rawTree));
         });
+
+
         $(this.addCategoryButtonId).on('click', (evt) => {
             evt.preventDefault();
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked && x.list)
@@ -167,6 +125,8 @@ class PhrasebookController {
             createCategory(text, parentId);
             getTree(languageId).done((rawTree) => this.setTree(rawTree));
         });
+
+
         $(this.modifyButtonId).on('click', (evt) => {
             evt.preventDefault();
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)

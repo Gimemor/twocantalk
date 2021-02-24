@@ -253,3 +253,6 @@
     background: lightgray;
     border-color: darkgray;
 }
+.window-height {
+    height: 88vh;
+}
