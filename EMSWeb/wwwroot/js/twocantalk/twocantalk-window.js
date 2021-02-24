@@ -43,8 +43,7 @@ class ChatContext {
         this.initLanguageSelector();
         this.initKeyboard();
         $(this.toggleVoiceId).on('click', this.toggleVoice);
-        $(this.inputSelector).on('keyup', this.handleKeyupSelector);
-        $(this.inputSelector).on('accepted', this.inputHandler);
+        $(this.inputSelector).on('accepted', (evt) => this.inputHandler(evt));
         $(this.languageSelectorId).on('change', this.handleLanguageSelect)
         $(this.repeatLastSentenceButtonId).on('click', this.repeatLastSentence);
         $(this.repeatTranslatedButtonId).on('click', this.repeatTranslated);
@@ -76,7 +75,9 @@ class ChatContext {
     get exportToPdfButtonId() { return '#' + this.chatDefinition.exportToPdfButtonId; }
     get placeholderSelector() { return '#' + this.chatDefinition.placeholderSelector; }
     get phrasebookInfo() { return this.chatDefinition.phrasebook; }
-    get openPhrasebookButtonId() { return (this.chatDefinition.phrasebook) ? '#' +  this.chatDefinition.phrasebook.openPhrasebookButtonId : ''; }
+    get openPhrasebookButtonId() { return (this.chatDefinition.phrasebook) ? '#' + this.chatDefinition.phrasebook.openPhrasebookButtonId : ''; }
+    get genderId() { return this.chatDefinition.genderId; }
+
     initLanguageSelector = function() {
         $(this.languageSelectorId).select2({
             data: languages
@@ -86,32 +87,39 @@ class ChatContext {
     initKeyboard = function() {
         const languageInfo = languages.find(x => x.id == this.languageId);
         this.keyboard = initKeyboard(languageInfo, this.inputSelector, this.keyboardContainer)
-        $.keyboard.keyaction.enter = function (kb) {
+        $.keyboard.keyaction.enter =  (kb, val, evt) => {
+            evt.preventDefault();
+
+            if (evt.ctrlKey) {
+                kb.$el.val(kb.$el.val() + '\n');
+                return;
+            }
             // same as $.keyboard.keyaction.accept();
             kb.close(true);
             return false;     // return false prevents further processing
         };
     }
 
-    inputHandler = function(event) {
-        let value = $(this.inputSelector).val()
+    inputHandler = function (event) {
+        event.preventDefault();
+        let value = $(this.inputSelector).val().trim();
         if (!value || value.length <= 0) {
             return;
         }
-        $(this.inputSelector).val('');
         let message = { text: value, time: new Date(), type: MESSAGE_TYPE.sent, languageId: this.languageId };
         const from = languages.find(x => x.id == this.connectedContext.languageId);
         const to = languages.find(x => x.id == this.languageId);
         if (from.language === to.language) {
             this.addMessage(message, false, false, message.text, message.text, this.languageId, this.languageId);
         }
-
         if (this.sendToConnected) {
             this.sendToConnected({
                 type: 'message',
                 value: Object.assign({}, message)
             })
         }
+        $(this.inputSelector).val('');
+        $(this.inputSelector).prop('selectionStart', 0); $(this.inputSelector).prop('selectionEnd', 0); 
     };
 
     addMessage = function(message, wasSpoken, wasTranslated, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
@@ -228,13 +236,7 @@ class ChatContext {
     toggleVoice = () => {
         this.isVoiceEnabled = !this.isVoiceEnabled;
     }
-
-    handleKeyupSelector = () => {
-        if (event.key != 'Enter') {
-            return;
-        }
-        this.inputHandler(event);
-    }
+ 
 
     recreateKeyboard = (languageInfo) => {
         $(this.keyboard).getkeyboard().destroy();
