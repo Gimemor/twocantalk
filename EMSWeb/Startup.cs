@@ -30,6 +30,7 @@ namespace EMSWeb
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddScoped<IPhrasebookService, PhrasebookService>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -56,7 +56,9 @@
             <div class="nano-content">
                 <ul class="mt-3">
                     <li>
-                        <a class="sidebar-sub-toggle"><i class="fa fa-home"></i> Administration </a>
+                        <a class="sidebar-sub-toggle"><i class="fa fa-home"></i> Administration <i class="fa fa-chevron-down sidebar-collapse-icon"></i></a>
+                        <ul>
+                        </ul>
                     </li>
                     <li>
                         <a class="sidebar-sub-toggle"><i class="fa fa-folder-open-o"> </i>Ressources Library<i class="fa fa-chevron-down sidebar-collapse-icon"></i></a>
@@ -65,9 +67,9 @@
                                 <a class="sidebar-sub-toggle"><i class="fa fa-language"></i>Resources by Language@*<i class="fa fa-chevron-down sidebar-collapse-icon"></i>*@</a>
                                 <ul class="rsLanuages">
                                     @*@foreach (var x in Model.Languages)
-                                    {
-                                        <li><a id="@x.Id" class="lngClick">@x.Name</a></li>
-                                    }*@
+                        {
+                            <li><a id="@x.Id" class="lngClick">@x.Name</a></li>
+                        }*@
 
                                 </ul>
                             </li>
@@ -75,9 +77,9 @@
                                 <a class="sidebar-sub-toggle"><i class="fa fa-book"></i>Resources by Subject@*<i class="fa fa-chevron-down sidebar-collapse-icon">*@</i></a>
                                 <ul class="rsLanuages">
                                     @*@foreach (var x in Model.Subjects)
-                                    {
-                                        <li><a id="@x.Id" class="subClick">@x.Name</a></li>
-                                    }*@
+                        {
+                            <li><a id="@x.Id" class="subClick">@x.Name</a></li>
+                        }*@
 
                                 </ul>
                             </li>
@@ -85,16 +87,18 @@
                                 <a class="sidebar-sub-toggle"><i class="fa fa-globe"></i>Knowledge Share by Country@*<i class="fa fa-chevron-down sidebar-collapse-icon"></i>*@</a>
                                 <ul class="rsLanuages">
                                     @*@foreach (var x in Model.KnowledgeSharebyCountry)
-                                    {
-                                        <li><a id="@x.Id" class="kngClick">@x.Name</a></li>
-                                    }*@
+                        {
+                            <li><a id="@x.Id" class="kngClick">@x.Name</a></li>
+                        }*@
 
                                 </ul>
                             </li>
                             <li><a href="#" class="tchClick"><i class="fa fa-question-circle-o"></i>Teacher's Support Documents</a></li>
                         </ul>
                     </li>
-
+                    <li class="@((ViewBag.Page == "UserManagement")? "active" : "")">
+                        <a href="@Url.ActionLink("Index", "UserManagement")" ><i class="fa fa-language"></i>User Management</a>
+                    </li>
                     <li class="@((ViewBag.Page == "TextTutor")? "active" : "")"><a href="@Url.ActionLink("Index", "TextTutor")"><i class="fa fa-file-text-o"></i> Text Tutor </a></li>
                     <li class="@((ViewBag.Page == "TalkTutor")? "active" : "")"><a href="@Url.ActionLink("Index", "TalkTutor")"><i class="fa fa-commenting-o"></i>  Talking Tutor </a></li>
                     <li class="@((ViewBag.Page == "TwoCanTalk")? "active" : "")"><a href="@Url.ActionLink("Index", "TwoCanTalk")"><i class="fa fa-comments-o"></i> Twocan Talk </a></li>

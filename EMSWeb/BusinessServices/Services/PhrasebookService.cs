@@ -1,6 +1,7 @@
 ﻿
 using EMSWeb.BusinessServices.Services.Interfaces;
 using EMSWeb.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,11 @@ namespace EMSWeb.BusinessServices.Services
 {
 	public class PhrasebookService : IPhrasebookService
 	{
-        //TODO inject connectionString from appsetings
-        static string connectionString = "Server=localhost; Database=emsdb; UID=root; PWD=Mik70525";
+        private string _connectionString ;
+
+        public PhrasebookService(IConfiguration configuration) {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
 
         public async Task<PhrasebookList> GetPhrasebook()
 		{
@@ -39,7 +43,7 @@ namespace EMSWeb.BusinessServices.Services
         public async Task Delete(DeletePhrasebookDto[] toDelete) {
             try
             {
-                using (MySqlConnection con = new MySqlConnection(connectionString)) 
+                using (MySqlConnection con = new MySqlConnection(_connectionString)) 
                 {
                     await con.OpenAsync();
                     var phrasesIds = toDelete.Where(x => !x.IsList).Select(x => x.Id).ToList();
@@ -87,7 +91,7 @@ namespace EMSWeb.BusinessServices.Services
         {
             try
             {
-                using (MySqlConnection con = new MySqlConnection(connectionString))
+                using (MySqlConnection con = new MySqlConnection(_connectionString))
                 {
                     await con.OpenAsync();
                     var commandText =
@@ -109,7 +113,7 @@ namespace EMSWeb.BusinessServices.Services
         {
             try
             {
-                using (MySqlConnection con = new MySqlConnection(connectionString))
+                using (MySqlConnection con = new MySqlConnection(_connectionString))
                 {
                     await con.OpenAsync();
                     var commandText =
@@ -133,7 +137,7 @@ namespace EMSWeb.BusinessServices.Services
         {
             try
             {
-                using (MySqlConnection con = new MySqlConnection(connectionString))
+                using (MySqlConnection con = new MySqlConnection(_connectionString))
                 {
                     await con.OpenAsync();
                     var commandText = modifyNodeDto.IsList ?
@@ -154,7 +158,7 @@ namespace EMSWeb.BusinessServices.Services
 
         private async Task GetChildren(PhrasebookList parent) 
         {
-            using (MySqlConnection con = new MySqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
                     $"SELECT id, name FROM phrase_lists WHERE parent_id = {parent.Id} AND deleted = 0 ORDER BY sort_order;"
                 ))
@@ -185,7 +189,7 @@ namespace EMSWeb.BusinessServices.Services
 
         private async Task GetPhrasesForList(PhrasebookList parent) 
         {
-            using (MySqlConnection con = new MySqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
                 $"SELECT id, phrase_list_id, content FROM phrases WHERE deleted = 0 AND phrase_list_id = {parent.Id} ORDER BY sort_order"
             ))

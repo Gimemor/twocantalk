@@ -1,0 +1,75 @@
+﻿@model EMSWeb.Views.UserManagement.IndexModel
+@{
+    Layout = "_LayoutWithSidebar";
+    ViewBag.Page = "UserManagement";
+}
+
+@section Scripts {
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    <link href="~/HTML/css/twocantalk.css" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+}
+
+<div class="container-fluid">
+    <div class="row p-8 d-flex flex-row user-managment-header">
+        <div class="p-8">
+            <h5>User Management</h5>
+        </div>
+        <div class="p-8">
+            <a class="btn btn-primary" href="UserManagement/Add">Create New</a>
+        </div>
+    </div>
+
+    <div class="row p-8">
+        <div id="jsGrid"></div>
+    </div>
+</div>
+
+<script>
+
+    $("#jsGrid").jsGrid({
+        width: "100%",
+        height: "80vh",
+
+        inserting: false,
+        editing: true,
+        sorting: false,
+        paging: true,
+        pageLoading: true,
+        autoload: true,
+
+        controller: {
+            loadData: function (paging) {
+                var d = $.Deferred();
+
+                $.ajax({
+                    url: "/UserManagement/Get",
+                    type: "GET",
+                    dataType: "json",
+                    data: paging
+                }).done(function (response) {
+                    d.resolve(response);
+                });
+
+                return d.promise();
+            }
+        },
+        onItemDeleting: () => { alert('aaa'); },
+        onItemEditing: (args) => {
+            window.location.href = "/UserManagement/" + args.item.id;
+            args.cancel = true;
+        },
+        fields: [
+            { title: "Username", name: "username", type: "textarea", width: 150 },
+            { title: "Active", name: "active", type: "checkbox", width: 150 },
+            { title: "Address", name: "addressLine1", type: "text", width: 150 },
+            { title: "Organization", name: "organizationName", type: "text", width: 150 },
+            { title: "Talking Tutor", name: "permTalkingTutor", type: "checkbox", width: 150 },
+            { title: "Text Tutor", name: "permTextTutor", type: "checkbox", width: 150 },
+            { title: "Two Can Talk", name: "permTwoCanTalk", type: "checkbox", width: 150 },
+            { type: "control" }
+        ]
+    });
+</script>
