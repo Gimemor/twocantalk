@@ -242,5 +242,18 @@ namespace EMSWeb.BusinessServices.Services
 				await connection.CloseAsync();
 			}
 		}
+
+		public async Task Delete(int id)
+		{
+			var commandText = $"DELETE FROM users WHERE id = {id}";
+			using (var connection = new MySqlConnection(_connectionSettings))
+			using (var command = new MySqlCommand(commandText, connection))
+			{
+				command.CommandType = CommandType.Text;
+				await connection.OpenAsync();
+				var d = await command.ExecuteNonQueryAsync();
+				await connection.CloseAsync();
+			}
+		}
 	}
 }

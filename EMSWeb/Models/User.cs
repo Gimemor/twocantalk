@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace EMSWeb.Models
@@ -10,6 +11,7 @@ namespace EMSWeb.Models
 		public uint Id { get; set; }
 
 		[DataMember]
+		[Required(ErrorMessage = "Username is required")]
 		public string Username { get; set; }
 
 		[DataMember]

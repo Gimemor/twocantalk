@@ -43,6 +43,14 @@ namespace EMSWeb.Controllers
             return View("Edit", model);
         }
 
+        [HttpDelete]
+        [Route("UserManagement/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _userManagementService.Delete(id);
+            return Ok();
+        }
+
         [HttpGet]
         [Route("UserManagement/Add")]
         public IActionResult Add()
@@ -65,8 +73,6 @@ namespace EMSWeb.Controllers
             {
                 await _userManagementService.Update(user);
             }
-
-            
             return RedirectToAction("Index");
         }
     }

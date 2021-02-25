@@ -11,6 +11,6 @@ namespace EMSWeb.BusinessServices.Services.Interfaces
 		public Task<User> Get(int id);
 		public Task Insert(User user);
 		public Task Update(User user);
-
+		public Task Delete(int id);
 	}
 }

@@ -56,7 +56,16 @@
                 return d.promise();
             }
         },
-        onItemDeleting: () => { alert('aaa'); },
+        onItemDeleting: (args) => {
+            var d = $.Deferred();
+            $.ajax({
+                url: "/UserManagement/" + args.item.id,
+                type: "DELETE"
+            }).done(function (response) {
+                d.resolve(response);
+            });
+            return d.promise();
+        },
         onItemEditing: (args) => {
             window.location.href = "/UserManagement/" + args.item.id;
             args.cancel = true;
