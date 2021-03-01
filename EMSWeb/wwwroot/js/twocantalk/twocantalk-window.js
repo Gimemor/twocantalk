@@ -16,18 +16,18 @@ function vh_sceneLoaded(sceneIndex, sceneRef) {
     loadedScenes.push(sceneRef);
     $(window).off('resize');
     contexts.filter(ref => loadedScenes.includes(ref.chatDefinition.sceneId)).forEach(context => {
-        $(window).on('resize',  function() {
-            const ratio =  $(window).height() / $(window).width();
-            const width =  $(context.placeholderSelector).find('.avatar').width();
+        $(window).on('resize', function () {
+            const ratio = $(window).height() / $(window).width();
+            const width = $(context.placeholderSelector).find('.avatar').width();
             const height = $(context.placeholderSelector).find('.avatar').height();
-            
+
             selectScene(context.chatDefinition.sceneRef);
             dynamicResize(width, height);
         });
     });
     $(window).trigger('resize');
 }
- 
+
 class ChatContext {
     that = this;
 
@@ -38,7 +38,7 @@ class ChatContext {
         this.messages = [];
         this.languageId = 1;
         this.showTranslatedText = false;
-        
+
 
         this.initLanguageSelector();
         this.initKeyboard();
@@ -55,7 +55,7 @@ class ChatContext {
 
         $(this.languageSelectorId).trigger('change');
         $(this.toggleKeyboardId).click();
-        $(this.inputSelector).parent().click( () => { $(this.inputSelector).focus(); });
+        $(this.inputSelector).parent().click(() => { $(this.inputSelector).focus(); });
         $(this.languageSelectorId).val(this.languageId);
 
 
@@ -78,16 +78,16 @@ class ChatContext {
     get openPhrasebookButtonId() { return (this.chatDefinition.phrasebook) ? '#' + this.chatDefinition.phrasebook.openPhrasebookButtonId : ''; }
     get genderId() { return this.chatDefinition.genderId; }
 
-    initLanguageSelector = function() {
+    initLanguageSelector = function () {
         $(this.languageSelectorId).select2({
             data: languages
         });
     }
 
-    initKeyboard = function() {
+    initKeyboard = function () {
         const languageInfo = languages.find(x => x.id == this.languageId);
         this.keyboard = initKeyboard(languageInfo, this.inputSelector, this.keyboardContainer)
-        $.keyboard.keyaction.enter =  (kb, val, evt) => {
+        $.keyboard.keyaction.enter = (kb, val, evt) => {
             evt.preventDefault();
 
             if (evt.ctrlKey) {
@@ -119,10 +119,10 @@ class ChatContext {
             })
         }
         $(this.inputSelector).val('');
-        $(this.inputSelector).prop('selectionStart', 0); $(this.inputSelector).prop('selectionEnd', 0); 
+        $(this.inputSelector).prop('selectionStart', 0); $(this.inputSelector).prop('selectionEnd', 0);
     };
 
-    addMessage = function(message, wasSpoken, wasTranslated, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
+    addMessage = function (message, wasSpoken, wasTranslated, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
         message.wasSpoken = wasSpoken;
         message.wasTranslated = wasTranslated;
         message.sourceText = sourceText;
@@ -135,7 +135,7 @@ class ChatContext {
         this.updateTextarea();
     }
 
-    sayText = function(text, languageId) {
+    sayText = function (text, languageId) {
         window.selectScene(this.sceneRef);
         const langInfo = languages.find(x => x.id == languageId);
         if (this.genderId == GENDER_ID.male) {
@@ -158,7 +158,7 @@ class ChatContext {
             let translatedLanguageId = this.languageId;
             translatedText = event.value.text;
             if (shouldTranslate) {
-                translate(event.value.text, event.value.languageId, this.languageId,  (data, status) => {
+                translate(event.value.text, event.value.languageId, this.languageId, (data, status) => {
                     translatedText = data.data.translations[0].translatedText;
                     if (this.isVoiceEnabled) {
                         this.sayText(translatedText, this.languageId);
@@ -180,7 +180,7 @@ class ChatContext {
             }
         } else if (event.type == 'reverse-translation') {
             event.value.type = (event.value.type == MESSAGE_TYPE.sent) ? MESSAGE_TYPE.recieved : MESSAGE_TYPE.sent;
-            translate(event.value.translatedText, event.value.translatedLanguageId, this.languageId,   (data, status) => {
+            translate(event.value.translatedText, event.value.translatedLanguageId, this.languageId, (data, status) => {
                 translatedText = data.data.translations[0].translatedText;
                 this.addMessage(
                     event.value,
@@ -194,7 +194,7 @@ class ChatContext {
         }
     }).bind(this)
 
-    updateTextarea = function() {
+    updateTextarea = function () {
         const el = $(this.chatHistoryId);
         let str = '';
         for (let i = 0; i < this.messages.length; i++) {
@@ -227,7 +227,7 @@ class ChatContext {
         el.html(str);
     }
 
-    updateKeyboardHideFlag = () =>  {
+    updateKeyboardHideFlag = () => {
         $(this.toggleKeyboardId).hasClass('active') ?
             $(this.keyboard).getkeyboard().$keyboard.addClass('english-hidden') :
             $(this.keyboard).getkeyboard().$keyboard.removeClass('english-hidden')
@@ -236,7 +236,7 @@ class ChatContext {
     toggleVoice = () => {
         this.isVoiceEnabled = !this.isVoiceEnabled;
     }
- 
+
 
     recreateKeyboard = (languageInfo) => {
         $(this.keyboard).getkeyboard().destroy();
@@ -279,79 +279,82 @@ class ChatContext {
     }
 
     handleCreatePdfClick = () => {
-        const firstName = window.prompt('Please enter that Teacher name:');
-        const secondName = window.prompt('Please enter the Student name:');
-        const messageKey = 'translatedText';
-        let lines = [];
-        lines = lines.concat([
-            {
-                alignment: 'justify',
-                columns: [
-                    `${firstName}`,
-                    `${secondName}`,
-                ]
-            },
-            '\n']);
-        for (let i = 0; i < this.messages.length; i++) {
-            const message = this.messages[i];
-            const connectedMessage = this.connectedContext.messages[i];
-            lines = lines.concat([
-                //{
-                //    alignment: 'justify',
-                //    columns: [
-                //        `from ${(isSent)? firstName : secondName}`,
-                //        `to ${(isSent)? secondName : firstName}`,
-                //    ]
-                //},
-                //{
-                //    alignment: 'justify',
-                //    columns: [
-                //        `${(isSent) ? firstName : secondName}` + fromLangInfo.text,
-                //        `${(isSent) ? secondName : firstName}` +toLangInfo.text
-                //    ]
-                //},
-                {
-                    alignment: 'justify',
-                    columns: [
+        DayPilot.Modal.prompt('Please enter that Teacher name:', { theme: "modal_rounded" }).then((firstNameResult) => {
+            DayPilot.Modal.prompt('Please enter the Student name:', { theme: "modal_rounded" }).then((secondNameResult) => {
+                const firstName = firstNameResult.result;
+                const secondName = secondNameResult.result;
+                const messageKey = 'translatedText';
+                let lines = [];
+                lines = lines.concat([
+                    {
+                        alignment: 'justify',
+                        columns: [
+                            `${firstName}`,
+                            `${secondName}`,
+                        ]
+                    },
+                    '\n']);
+                for (let i = 0; i < this.messages.length; i++) {
+                    const message = this.messages[i];
+                    const connectedMessage = this.connectedContext.messages[i];
+                    lines = lines.concat([
+                        //{
+                        //    alignment: 'justify',
+                        //    columns: [
+                        //        `from ${(isSent)? firstName : secondName}`,
+                        //        `to ${(isSent)? secondName : firstName}`,
+                        //    ]
+                        //},
+                        //{
+                        //    alignment: 'justify',
+                        //    columns: [
+                        //        `${(isSent) ? firstName : secondName}` + fromLangInfo.text,
+                        //        `${(isSent) ? secondName : firstName}` +toLangInfo.text
+                        //    ]
+                        //},
                         {
-                            text: message['time'].toLocaleTimeString() + ' > ' + message[messageKey] + ' ' + (message.wasTranslated ? `` : ''),
-                            style: [message.type == MESSAGE_TYPE.recieved ? 'bold' : '']
+                            alignment: 'justify',
+                            columns: [
+                                {
+                                    text: message['time'].toLocaleTimeString() + ' > ' + message[messageKey] + ' ' + (message.wasTranslated ? `` : ''),
+                                    style: [message.type == MESSAGE_TYPE.recieved ? 'bold' : '']
+                                },
+                                {
+                                    text: connectedMessage['time'].toLocaleTimeString() + ' > ' + connectedMessage[messageKey] + ' ' + (connectedMessage.wasTranslated ? `` : ''),
+                                    style: [connectedMessage.type == MESSAGE_TYPE.recieved ? 'bold' : '']
+                                }
+                            ]
                         },
-                        {
-                            text: connectedMessage['time'].toLocaleTimeString() + ' > ' + connectedMessage[messageKey] + ' ' + (connectedMessage.wasTranslated ? `` : ''),
-                            style: [connectedMessage.type == MESSAGE_TYPE.recieved ? 'bold' : '']
+                        '\n'
+                    ])
+                };
+                var dd = {
+                    content: [
+                        'The two can talk transcription between ' + firstName + ' & ' + secondName + ' on ' + (new Date()).toLocaleDateString() + '\n\n',
+                        'Bold is for recipient.\n\n'
+                    ].concat(lines),
+                    styles: {
+                        header: {
+                            fontSize: 18,
+                            bold: true
+                        },
+                        bold: {
+                            bold: true
                         }
-                    ]
-                },
-                '\n'
-            ])
-        };
-        var dd = {
-            content: [
-                'The two can talk transcription between ' + firstName + ' & ' + secondName + ' on ' + (new Date()).toLocaleDateString() + '\n\n',
-                'Bold is for recipient.\n\n'
-            ].concat(lines),
-            styles: {
-                header: {
-                    fontSize: 18,
-                    bold: true
-                },
-                bold: {
-                    bold: true
-                }
-            },
-            defaultStyle: {
-                columnGap: 20
-            }
-        };
+                    },
+                    defaultStyle: {
+                        columnGap: 20
+                    }
+                };
 
-        pdfMake.createPdf(dd).download();
+                pdfMake.createPdf(dd).download();
 
-        // html2canvas($(context.chatHistoryId)[0]).then(img => {
-        //     doc.addImage(img.toDataURL(), 'png', 0, 0, 300, 300);
-        //     doc.save("transcription.pdf");
-        // });
-
+                // html2canvas($(context.chatHistoryId)[0]).then(img => {
+                //     doc.addImage(img.toDataURL(), 'png', 0, 0, 300, 300);
+                //     doc.save("transcription.pdf");
+                // });
+            });
+        });
     }
 
     handleToggleKeyboardClick = () => {

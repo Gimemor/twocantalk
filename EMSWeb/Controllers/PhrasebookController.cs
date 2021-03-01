@@ -38,15 +38,15 @@ namespace EMSWeb.Controllers
 
         // POST: api/Phrasebook
         [HttpPost]
-        public async Task Post([FromBody] CreatePhraseDto value)
+        public async Task<IActionResult> Post([FromBody] CreatePhraseDto value)
         {
-             await PhrasebookService.CreatePhrase(value);
+             return Ok(await PhrasebookService.CreatePhrase(value));
         }
 
         [HttpPost("category")]
-        public async Task PostCategory([FromBody] CreateListDto value)
+        public async Task<IActionResult> PostCategory([FromBody] CreateListDto value)
         {
-            await PhrasebookService.CreateList(value);
+            return Ok(await PhrasebookService.CreateList(value));
         }
 
         [HttpPost("modify")]

@@ -87,49 +87,55 @@ namespace EMSWeb.BusinessServices.Services
             }
         }
 
-        public async Task CreatePhrase(CreatePhraseDto createPhraseDto) 
+        public async Task<int> CreatePhrase(CreatePhraseDto createPhraseDto) 
         {
-            try
+            int id = 0;
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
-                using (MySqlConnection con = new MySqlConnection(_connectionString))
+                await con.OpenAsync();
+                var commandText =
+                    $"INSERT INTO phrases(phrase_list_id, content, sort_order, deleted, created_by) " +
+                    $"VALUES({createPhraseDto.ListId}, '{createPhraseDto.Text}', 1, 0, 1)";
+                using (var cmd = new MySqlCommand(commandText, con))
                 {
-                    await con.OpenAsync();
-                    var commandText =
-                        $"INSERT INTO phrases(phrase_list_id, content, sort_order, deleted, created_by) " +
-                        $"VALUES({createPhraseDto.ListId}, '{createPhraseDto.Text}', 1, 0, 1)";
-                    using (var cmd = new MySqlCommand(commandText, con))
-                    {
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                    await con.CloseAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
+                using (var cmd = new MySqlCommand("SELECT LAST_INSERT_ID() AS ID;", con))
+                {
+                    var d = await cmd.ExecuteReaderAsync();
+                    if (d.HasRows &&  d.Read())
+                    {
+                        id = Convert.ToInt32((ulong)d["ID"]);
+                    }
+                }
+                await con.CloseAsync();
             }
-            catch (Exception ex)
-            {
-
-            }
+            return id;
         }
-        public async Task CreateList(CreateListDto createListDto)
+        public async Task<int> CreateList(CreateListDto createListDto)
         {
-            try
+            int id = 0;
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
-                using (MySqlConnection con = new MySqlConnection(_connectionString))
+                await con.OpenAsync();
+                var commandText =
+                    $"INSERT INTO phrase_lists(created_by, name, sort_order, org_name, deleted, parent_id)" +
+                    $"VALUES(1, '{createListDto.Name}', 1, 'DEFAULT', 0, {createListDto.ParentId})";
+                using (var cmd = new MySqlCommand(commandText, con))
                 {
-                    await con.OpenAsync();
-                    var commandText =
-                        $"INSERT INTO phrase_lists(created_by, name, sort_order, org_name, deleted, parent_id)" +
-                        $"VALUES(1, '{createListDto.Name}', 1, 'DEFAULT', 0, {createListDto.ParentId})";
-                    using (var cmd = new MySqlCommand(commandText, con))
-                    {
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                    await con.CloseAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
+                using (var cmd = new MySqlCommand("SELECT LAST_INSERT_ID() AS ID;", con))
+                {
+                    var d = await cmd.ExecuteReaderAsync();
+                    if (d.HasRows && d.Read())
+                    {
+                        id = Convert.ToInt32((ulong)d["ID"]);
+                    }
+                }
+                await con.CloseAsync();
             }
-            catch (Exception ex)
-            {
-
-            }
+            return id;
         }
 
 

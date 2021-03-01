@@ -27,10 +27,17 @@ namespace EMSWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews(config => {
+                config.Filters.Add<SidebarActionFilter>();
+            }).AddRazorRuntimeCompilation();
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddScoped<IPhrasebookService, PhrasebookService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<IResourceLibService, ResourceLibService>();
+            services.AddScoped<ILanguageService, LanguageService>();
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<ITeacherSupportDocumentService, TeacherSupportDocumentService>();
+            services.AddScoped<IKnowledgeService, KnowledgeSharedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

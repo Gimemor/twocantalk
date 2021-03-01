@@ -4,9 +4,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EMSWeb.BusinessServices.Services.Interfaces;
 using EMSWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using Nancy.Json;
 
@@ -18,152 +21,70 @@ namespace EMSWeb.Controllers
         public string StudentStatue { get; set; }
     }
 
-    public class AjaxLangualeViewModel
+    public class AjaxLanguageViewModel
     {
         public string Filename { get; set; }
         public string Subjects { get; set; }
         public string Language { get; set; }
         public string Mime_type { get; set; }
         public string Tags { get; set; }
+        public uint Id { get; set; }
     }
+
     public class ResourcesLibController : Controller
     {
+        private string _connectionString;
+        private IResourceLibService _resourceLibService;
+        private ILanguageService _languageService;
+        private ISubjectService _subjectService;
+        private ITeacherSupportDocumentService _teacherSupportDocumentService;
+        private IKnowledgeService _knowledgeService;
 
-        public async Task<ActionResult> AddNew(string firstname)
+        public ResourcesLibController(IConfiguration configuration, 
+            IResourceLibService resourceLibService,
+            ILanguageService languageService,
+            ISubjectService subjectService,
+            IKnowledgeService knowledgeService,
+            ITeacherSupportDocumentService teacherSupportDocumentService) 
         {
-            try
-            {
-                if (Request.Form.Files.Count > 0)
-                {
-                    var root = "~/Content/Images";
-                    foreach (var formFile in Request.Form.Files)
-                    {
-                        if (formFile.Length > 0)
-                        {
-                            var filePath = Path.Combine(root,Path.GetRandomFileName());
-
-                            using (var stream = System.IO.File.Create(filePath))
-                            {
-                                await formFile.CopyToAsync(stream);
-                            }
-                        }
-                    }
-                    return Json(new { success = true, message = "File uploaded successfully" });
-                }
-                return Json(new { success = false, message = "Please select a file !" });
-
-                
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _resourceLibService = resourceLibService;
+            _languageService = languageService;
+            _subjectService = subjectService;
+            _teacherSupportDocumentService = teacherSupportDocumentService;
+            _knowledgeService = knowledgeService;
         }
+        public AjaxLanguageViewModel BindToAjaxLanguageViewModel(MySqlDataReader d)
+        {
+            return new AjaxLanguageViewModel
+            {
+                Id = (uint)d["Id"],
+                Filename = d["Filename"].ToString(),
+                Subjects = d["Subjects"].ToString(),
+                Language = d["Language"].ToString(),
+                Mime_type = d["Mime_type"].ToString(),
+                Tags = d["Tags"].ToString()
+            };
+        }
+        
         // GET: ResourcesLib
-        public  ActionResult Index()
+        public  async Task<ActionResult> Index()
         {
             Resources model = new Resources();
-            model.Languages = new List<Languages>();
-            model.Subjects = new List<Subject>();
-            model.KnowledgeSharebyCountry = new List<KnowledgeSharebyCountry>();
-            model.TeacherSupportDocuments = new List<TeachersSupportDocuments>();
-            try
+            if (TempData.Keys.Contains("Id"))
             {
-
-                //using var connection = new MySqlConnection("DefaultConnection");
-                //await connection.OpenAsync();
-
-                //using var command = new MySqlCommand("SELECT * FROM languages WHERE `active`=1 Order By name;", connection);
-                //using var reader = await command.ExecuteReaderAsync();
-                //while (await reader.ReadAsync())
-                //{
-                //    var value = reader.GetValue(0);
-                //    // do something with 'value'
-                //}
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
-                {
-                    using (MySqlCommand cmd = new MySqlCommand("SELECT id,Name FROM languages WHERE `active`=1 Order By name"))
-                    {
-                        cmd.CommandType = CommandType.Text;
-                        cmd.Connection = con;
-                        con.Open();
-                        // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                        var d = cmd.ExecuteReader();
-                        if (d.HasRows)
-                        {
-                            while (d.Read())
-                            {
-                                model.Languages.Add(new Languages { Id = d["Id"].ToString(), Name = d["Name"].ToString() });
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
-                {
-                    //Subjects
-                    using (MySqlCommand cmd = new MySqlCommand("SELECT id,Name FROM subjects Order By name"))
-                    {
-                        cmd.CommandType = CommandType.Text;
-                        cmd.Connection = con;
-                        con.Open();
-                        var d = cmd.ExecuteReader();
-                        if (d.HasRows)
-                        {
-                            while (d.Read())
-                            {
-                                model.Subjects.Add(new Subject { Id = d["Id"].ToString(), Name = d["Name"].ToString() });
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
-                {
-                    //Knowledge by counyty
-                    using (MySqlCommand cmd = new MySqlCommand("SELECT id,Name FROM countries Order By name"))
-                    {
-                        cmd.CommandType = CommandType.Text;
-                        cmd.Connection = con;
-                        con.Open();
-                        var d = cmd.ExecuteReader();
-                        if (d.HasRows)
-                        {
-                            while (d.Read())
-                            {
-                                model.KnowledgeSharebyCountry.Add(new KnowledgeSharebyCountry { Id = d["Id"].ToString(), Name = d["Name"].ToString() });
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-                //Teachers
-                //using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
-                //{
-                //    using (MySqlCommand cmd = new MySqlCommand("SELECT Id, filename AS name FROM files_teachers_support_documents WHERE deleted = 0 Order By filename;"))
-                //    {
-                //        cmd.CommandType = CommandType.Text;
-                //        cmd.Connection = con;
-                //        con.Open();
-                //         var d = cmd.ExecuteReader();
-                //        if (d.HasRows)
-                //        {
-                //            while (d.Read())
-                //            {
-                //                model.TeacherSupportDocuments.Add(new TeachersSupportDocuments { Id = d["Id"].ToString(), Name = d["Name"].ToString() });
-                //            }
-                //        }
-                //    }
-                //    con.Close();
-                //}
-
+                ViewBag.Id = TempData["Id"];
             }
-            catch (Exception ex)
+            if (TempData.Keys.Contains("Mode"))
             {
-
+                ViewBag.Mode = TempData["Mode"];
             }
-            return View(model);
+            ViewBag.Languages = await _languageService.GetList();
+            ViewBag.Subjects = await _subjectService.GetList();
+            ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
+            ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            
+            return View("List", model);
         }
 
         // GET: ResourcesLib/Details/5
@@ -199,27 +120,25 @@ namespace EMSWeb.Controllers
 
         public string GetLanguagesById(string id = "2")
         {
-            IList<AjaxLangualeViewModel> data = new List<AjaxLangualeViewModel>();
-            using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
+            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT f.id, f.Filename, s.name as Subjects, l.name as Language,Mime_type,Tags FROM files as f INNER JOIN languages as l ON f.language = l.id  INNER JOIN subjects as s on f.subject1 = s.id      WHERE f.deleted = 0 and f.language ="+id))
             {
-                using (MySqlCommand cmd = new MySqlCommand("SELECT f.Filename, s.name as Subjects, l.name as Language,Mime_type,Tags FROM f1_emasuk_devresources.files as f INNER JOIN f1_emasuk_devresources.languages as l ON f.language = l.id  INNER JOIN f1_emasuk_devresources.subjects as s on f.subject1 = s.id      WHERE f.deleted = 0 and f.language ="+id))
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = con;
+                con.Open();
+                // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+                var d = cmd.ExecuteReader();
+                if (d.HasRows)
                 {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = con;
-                    con.Open();
-                    // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                    var d = cmd.ExecuteReader();
-                    if (d.HasRows)
+                    while (d.Read())
                     {
-                        while (d.Read())
-                        {
-                            data.Add(new AjaxLangualeViewModel { Filename = d["Filename"].ToString(), Subjects = d["Subjects"].ToString(), Language = d["Language"].ToString(), Mime_type = d["Mime_type"].ToString(), Tags = d["Tags"].ToString() });
-                        }
+                        data.Add(BindToAjaxLanguageViewModel(d));
                     }
-                    // trvResourcesByLanguages.DataBind();
-                    con.Close();
                 }
-            }        
+                // trvResourcesByLanguages.DataBind();
+                con.Close();
+            }
 
             JavaScriptSerializer js = new JavaScriptSerializer();
             string json = js.Serialize(data);
@@ -230,10 +149,10 @@ namespace EMSWeb.Controllers
 
         public string GetSubjectssById(string id = "2")
         {
-            IList<AjaxLangualeViewModel> data = new List<AjaxLangualeViewModel>();
-            using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
+            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
-                string sql = $"SELECT files.id, files.filename, CONCAT(subjects.code, IF(isnull(subjects2.code), '', IF(subjects.code <> subjects2.code, CONCAT(', ', subjects2.code), '')), IF(isnull(subjects3.code), '', IF(subjects.code <> subjects3.code, IF(subjects2.code <> subjects3.code, CONCAT(', ', subjects3.code), ''), ''))) as subjects,";
+                string sql = $"SELECT files.id, files.filename, files.Tags as Tags, CONCAT(subjects.code, IF(isnull(subjects2.code), '', IF(subjects.code <> subjects2.code, CONCAT(', ', subjects2.code), '')), IF(isnull(subjects3.code), '', IF(subjects.code <> subjects3.code, IF(subjects2.code <> subjects3.code, CONCAT(', ', subjects3.code), ''), ''))) as subjects,";
                 sql += $" subjects.name As subject1, subjects2.name AS subject2, subjects3.name AS subject3, languages.name AS language, files.mime_type, DATE_FORMAT(files.last_uploaded_timestamp, '%d/%m/%Y') As last_uploaded_date";
                 sql += $" FROM(subjects AS subjects2 RIGHT JOIN(subjects INNER JOIN(files INNER JOIN languages ON files.language = languages.id) ON subjects.id = files.subject1) ON subjects2.id = files.subject2) LEFT JOIN subjects AS subjects3 ON files.subject3 = subjects3.id";
                 sql += $" WHERE (files.subject1={id} OR files.subject2={id} OR files.subject3={id}) AND files.deleted=0;";
@@ -248,7 +167,7 @@ namespace EMSWeb.Controllers
                     {
                         while (d.Read())
                         {
-                            data.Add(new AjaxLangualeViewModel { Filename = d["Filename"].ToString(), Subjects = d["Subjects"].ToString(), Language = d["Language"].ToString(), Mime_type = d["Mime_type"].ToString() });
+                            data.Add(BindToAjaxLanguageViewModel(d));
                         }
                     }
                     // trvResourcesByLanguages.DataBind();
@@ -264,10 +183,10 @@ namespace EMSWeb.Controllers
         }
         public string GetKnowledgeSharedById(string id = "2")
         {
-            IList<AjaxLangualeViewModel> data = new List<AjaxLangualeViewModel>();
-            using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
+            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
-                using (MySqlCommand cmd = new MySqlCommand($"SELECT *, '' as Subjects, 'English' as Language FROM country_knowledge_share_files WHERE country_knowledge_share_files.deleted = 0 AND country_knowledge_share_files.country_id = {id} ORDER BY country_knowledge_share_files.filename;"))
+                using (MySqlCommand cmd = new MySqlCommand($"SELECT *, '' as Subjects, 'English' as Language, '' as Tags FROM country_knowledge_share_files WHERE country_knowledge_share_files.deleted = 0 AND country_knowledge_share_files.country_id = {id} ORDER BY country_knowledge_share_files.filename;"))
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = con;
@@ -278,7 +197,7 @@ namespace EMSWeb.Controllers
                     {
                         while (d.Read())
                         {
-                            data.Add(new AjaxLangualeViewModel { Filename = d["Filename"].ToString(), Subjects = d["Subjects"].ToString(), Language = d["Language"].ToString(), Mime_type = d["Mime_type"].ToString() });
+                            data.Add(BindToAjaxLanguageViewModel(d));
                         }
                     }
                     // trvResourcesByLanguages.DataBind();
@@ -294,26 +213,24 @@ namespace EMSWeb.Controllers
         }
         public string GetTeachersDocById(string id = "2")
         {
-            IList<AjaxLangualeViewModel> data = new List<AjaxLangualeViewModel>();
-            using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
+            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT Id, filename,'' Subjects,'English' Language,Mime_type, '' as Tags  FROM files_teachers_support_documents WHERE deleted = 0 Order By filename;"))
             {
-                using (MySqlCommand cmd = new MySqlCommand("SELECT Id, filename,'' Subjects,'English' Language,Mime_type  FROM files_teachers_support_documents WHERE deleted = 0 Order By filename;"))
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = con;
+                con.Open();
+                // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+                var d = cmd.ExecuteReader();
+                if (d.HasRows)
                 {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = con;
-                    con.Open();
-                    // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                    var d = cmd.ExecuteReader();
-                    if (d.HasRows)
+                    while (d.Read())
                     {
-                        while (d.Read())
-                        {
-                            data.Add(new AjaxLangualeViewModel { Filename = d["Filename"].ToString(), Subjects = d["Subjects"].ToString(), Language = d["Language"].ToString(), Mime_type = d["Mime_type"].ToString() });
-                        }
+                        data.Add(BindToAjaxLanguageViewModel(d));
                     }
-                    // trvResourcesByLanguages.DataBind();
-                    con.Close();
                 }
+                // trvResourcesByLanguages.DataBind();
+                con.Close();
             }
 
             JavaScriptSerializer js = new JavaScriptSerializer();
@@ -322,39 +239,86 @@ namespace EMSWeb.Controllers
             json = json + " }";
             return json;
         }
+        // GET: /ResourcesLib/Language/5
+        [HttpGet]
+        public ActionResult ByLanguage(int id)
+        {
+            TempData["Id"] = id;
+            TempData["Mode"] = "language";
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult BySubject(int id)
+        {
+            TempData["Id"] = id;
+            TempData["Mode"] = "subject";
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult ByKnowledgeShared(int id)
+        {
+            TempData["Id"] = id;
+            TempData["Mode"] = "knowledgeshared";
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult ByTeacherDoc(int id)
+        {
+            TempData["Id"] = id;
+            TempData["Mode"] = "teacherdoc";
+            return RedirectToAction("Index");
+        }
+
         // GET: ResourcesLib/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var model = await _resourceLibService.Get(id);
+            var languages = await _languageService.GetList();
+            ViewBag.Languages = (languages != null) ? languages.Select(x => new SelectListItem(x.Name, x.Id)) : new List<SelectListItem>();
+            var subjects = await _subjectService.GetList();
+            ViewBag.Subjects = (subjects != null) ? subjects.Select(x => new SelectListItem(x.Name, x.Id)) : new List<SelectListItem>();
+            return View(model);
         }
-        public FileResult Download(string name)
+
+        public async Task<FileResult> Download(string name)
         {
-            string path = $"../files/resources/{name}";
-            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
-            string fileName = name;
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            var bytes = await _resourceLibService.DownloadFile(name);
+            return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, name);
         }
+
         // POST: ResourcesLib/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(ResourceModel model)
         {
-            try
+            if (model.Id > 0)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                await _resourceLibService.Update(model);
             }
-            catch
+            else
             {
-                return View();
+                await _resourceLibService.Create(model);
             }
+            return RedirectToAction("Index");
         }
-
-        // GET: ResourcesLib/Delete/5
-        public ActionResult Delete(int id)
+        [HttpGet]
+        public async Task<ActionResult> Add()
         {
-            return View();
+            var model = new ResourceModel();
+            var languages = await _languageService.GetList();
+            ViewBag.Languages = (languages != null) ? languages.Select(x => new SelectListItem(x.Name, x.Id)) : new List<SelectListItem>();
+            var subjects = await _subjectService.GetList();
+            ViewBag.Subjects = (subjects != null) ? subjects.Select(x => new SelectListItem(x.Name, x.Id)) : new List<SelectListItem>();
+            return View("Edit", model);
+        }
+        // GET: ResourcesLib/Delete/5
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _resourceLibService.Delete(id);
+            return RedirectToAction("Index");
         }
 
         // POST: ResourcesLib/Delete/5

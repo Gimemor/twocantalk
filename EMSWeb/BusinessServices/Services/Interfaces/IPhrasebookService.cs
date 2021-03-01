@@ -8,8 +8,8 @@ namespace EMSWeb.BusinessServices.Services.Interfaces
 	{
 		public Task<PhrasebookList> GetPhrasebook();
 		public Task Delete(DeletePhrasebookDto[] phrases);
-		public Task CreatePhrase(CreatePhraseDto createPhrase);
-		public Task CreateList(CreateListDto createPhrase);
+		public Task<int> CreatePhrase(CreatePhraseDto createPhrase);
+		public Task<int> CreateList(CreateListDto createPhrase);
 		public Task Modify(ModifyNodeDto node);
 	}
 }

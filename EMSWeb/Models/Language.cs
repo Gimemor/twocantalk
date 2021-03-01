@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EMSWeb.Models
 {
-    public class Languages
+    public class Language
     {
         public string Name { get; set; }
         public string Id { get; set; }
@@ -27,7 +27,7 @@ namespace EMSWeb.Models
     }
     public class Resources
     {
-        public List<Languages> Languages { get; set; }
+        public List<Language> Languages { get; set; }
         public List<Subject> Subjects { get; set; }
         public List<KnowledgeSharebyCountry> KnowledgeSharebyCountry { get; set; }
         public List<TeachersSupportDocuments> TeacherSupportDocuments { get; set; }

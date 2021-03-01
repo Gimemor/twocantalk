@@ -1,3 +1,4 @@
 EMSWeb/bin/*
 EMSWeb/obj/*
 .vs
+EMSWeb/wwwroot/files/*
