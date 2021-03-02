@@ -30,7 +30,8 @@ namespace EMSWeb
          ActionExecutionDelegate next)
         {
             // Do something before the action executes.
-
+            var loggedInUser = context.HttpContext.Session.GetObjectFromJson<LoggedInUser>("userObject"); ;
+            
             // next() calls the action method.
             var resultContext = await next();
             // resultContext.Result is set.
@@ -42,7 +43,6 @@ namespace EMSWeb
             ((Controller)context.Controller).ViewBag.MenuSubjects = await _subjectService.GetList();
             ((Controller)context.Controller).ViewBag.MenuKnowledgeSharebyCountry = await _knowledgeService.GetList();
             ((Controller)context.Controller).ViewBag.MenuTeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
-            var loggedInUser = context.HttpContext.Session.GetObjectFromJson<LoggedInUser>("userObject"); ;
             if (loggedInUser != null)
             {
                 ((Controller)context.Controller).ViewBag.PermTwoCanTalk = loggedInUser.TwoCanTalk;

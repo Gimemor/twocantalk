@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EMSWeb.BusinessServices.Services.Interfaces;
+using EMSWeb.Filters;
 using EMSWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,18 +39,21 @@ namespace EMSWeb.Controllers
 
         // POST: api/Phrasebook
         [HttpPost]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<IActionResult> Post([FromBody] CreatePhraseDto value)
         {
              return Ok(await PhrasebookService.CreatePhrase(value));
         }
 
         [HttpPost("category")]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<IActionResult> PostCategory([FromBody] CreateListDto value)
         {
             return Ok(await PhrasebookService.CreateList(value));
         }
 
         [HttpPost("modify")]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task Modify([FromBody] ModifyNodeDto node) 
         {
             await PhrasebookService.Modify(node);
@@ -63,6 +67,7 @@ namespace EMSWeb.Controllers
 
         // DELETE: api/Phrasebook/delete
         [HttpPost("delete")]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task Delete([FromBody] DeletePhrasebookDto[] ids)
         {
             await PhrasebookService.Delete(ids);

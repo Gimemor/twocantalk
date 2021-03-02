@@ -4,7 +4,11 @@
     <div class="row">\
         <h5 class="modal-title" id="<%= phrasebookLabel %>">Phrasebook Manager</h5>\
     </div>\
-    <div class="row pb-8 pt-8">\
+    <% if (showControlButton) {%>\
+        <div class="row pb-8 pt-8">\
+    <% } else { %>\
+        <div class="row pb-8 pt-8" style="display: none">\
+    <% } %>\
         <div class="col-lg-12 d-flex flex-wrap">\
             <div><button title="Add a category" type="button" class="btn btn-light" id="<%=addCategoryButtonId%>"><i class="fa fa-plus-square-o" aria-hidden="true"></i> Add Category</button></div>\
             <div><button title="Add a new phrase" type="button" class="btn btn-light" id="<%=addPhraseButtonId%>"><i class="fa fa-folder-open" aria-hidden="true"></i> Add Phrase</button></div>\

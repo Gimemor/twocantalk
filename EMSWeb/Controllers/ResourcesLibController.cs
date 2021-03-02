@@ -16,6 +16,8 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
+using EMSWeb.Filters;
+
 namespace EMSWeb.Controllers
 {
     public class AjaxViewModel
@@ -282,6 +284,7 @@ namespace EMSWeb.Controllers
         }
 
         // GET: ResourcesLib/Edit/5
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<ActionResult> Edit(int id)
         {
             var model = await _resourceLibService.Get(id);
@@ -301,6 +304,7 @@ namespace EMSWeb.Controllers
         // POST: ResourcesLib/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<ActionResult> Edit(ResourceModel model)
         {
             if (model.Id > 0)
@@ -314,6 +318,7 @@ namespace EMSWeb.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<ActionResult> Add()
         {
             var model = new ResourceModel();
@@ -324,6 +329,7 @@ namespace EMSWeb.Controllers
             return View("Edit", model);
         }
         // GET: ResourcesLib/Delete/5
+        [ClaimRequirement(ClaimType.Admin)]
         public async Task<ActionResult> Delete(int id)
         {
             await _resourceLibService.Delete(id);
@@ -333,6 +339,7 @@ namespace EMSWeb.Controllers
         // POST: ResourcesLib/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClaimRequirement(ClaimType.Admin)]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

@@ -7,6 +7,7 @@ using EMSWeb.BusinessServices.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +33,8 @@ namespace EMSWeb
                 config.Filters.Add<SidebarActionFilter>();
             }).AddRazorRuntimeCompilation().AddSessionStateTempDataProvider();
             services.AddSession();
+            services.AddAuthentication(IISDefaults.AuthenticationScheme);
+            services.AddAuthorization();
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddScoped<IPhrasebookService, PhrasebookService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
@@ -60,7 +63,7 @@ namespace EMSWeb
 
             app.UseRouting();
             app.UseSession();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
