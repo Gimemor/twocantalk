@@ -1,0 +1,348 @@
+.keyboard-container {
+  width: 100%;
+}
+
+._html5Player .main_container {
+    z-index: 0 !important;
+}
+
+.p-8 {
+    padding: 8px;
+}
+.pb-8 {
+    padding-bottom: 8px;
+}
+.pt-8 {
+    padding-top: 8px;
+}
+.pt-0 {
+    padding-top: 0;
+}
+.pl-8 {
+    padding-left: 8px;
+}
+.chat-history {
+    min-height: 150px;
+    overflow: auto;
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    background: white;
+    padding: 8px;
+}
+.chat-input {
+    width: 100%;
+    min-height: 150px;
+    height: 100% !important;
+    border: none;
+}
+.languageSelectorContainer {
+    flex-grow: 2;
+    display: flex;
+    justify-content: flex-end;
+    vertical-align: middle;
+}
+ .languageSelector {
+    width: 200px;
+
+ }
+
+.ui-keyboard {
+     position: static !important;
+}
+.grayed {
+    background: lightgray !important;
+}
+
+.grayed:hover {
+    background: lightcyan;
+}
+.ui-keyboard span { font-size: 1em; }
+.ui-keyboard-keyset {
+    width: 100%;
+}
+.ui-keyboard-button {
+    min-height: 1.2em;
+    min-width: 1.2em;
+    
+    width: calc(100% / 17);
+    margin: .1em;
+    cursor: pointer;
+}
+@media(max-width: 1024px) {
+    .ui-keyboard span {
+        font-size: 16px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 1.2em;
+        min-width: 1.4em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 2px;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        position: static;
+    }
+}
+
+@media(max-width: 900px) {
+    .ui-keyboard {
+        position: static !important;
+    }
+
+    .ui-keyboard span {
+        font-size: 8px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 1.3em;
+        min-width: 1.2em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 0;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        position: static;
+    }
+}
+@media(max-width: 450px) {
+    .ui-keyboard {
+        position: static !important;
+    }
+
+    .ui-keyboard span {
+        font-size: 7px;
+    }
+
+    .ui-keyboard-button {
+        min-height: 0.8em;
+        min-width: 0.7em;
+        /* max-width: 1.2em; */
+        /* max-height: 1.2em; */
+        /* width: 16px; */
+        /* height: 24px; */
+        padding: 0;
+        /* margin: 2px; */
+        border: none;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) {
+        min-width: 2em;
+    }
+
+    .ui-keyboard-actionkey:not(.ui-keyboard-dec):not(.ui-keyboard-combo) span {
+        font-size: 7px;
+        position: static;
+    }
+}
+
+.chat-line {
+    margin: 0px;
+}
+
+.expanded-row-content > *{
+    border: none;
+}
+.expanded-row-content:hover {
+    background-color: #EEF4FD;
+}
+.vhsshtml5_button_holder {
+    display: none !important;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+.chat-history-container {
+    overflow: auto;
+    height: 15vh;
+    min-height: 120px;
+}
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+}
+.avatar {
+    min-height: 400px;
+    width: 100%;
+}
+.toggle-row-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+.toggle-row {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.toggle-row:after {
+    content: '+';
+}
+.toggle-row.active:after {
+    content: '-';
+}
+.texttutor-input {
+    min-height: 150px;
+    width: 100%;
+}
+
+.textarea {
+    min-height: 150px;
+}
+
+.bstreeview .list-group-item:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
+
+.treeview {
+    overflow:auto;
+    max-height: 100%;
+    width: 100%;
+}
+.modal-body {
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+}
+.list-container {
+    overflow: hidden;
+    overflow-y: auto;
+    height: auto;
+}
+.english-hidden[data-ui-keyboard-language="en"] {
+    display: none !important;
+}
+
+.form-control > input {
+    border: none;
+}
+.form-control > input:focus {
+    border: none;
+    outline: none;
+}
+.form-control.textarea {
+    height: auto;
+    border: 2px solid lightgray;
+    cursor: text;
+}
+.form-control.textarea:hover {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+.toggle-row-container button {
+    background: lightgray;
+    border-color: darkgray;
+}
+.window-height {
+    height: 88vh;
+}
+.user-managment-header {
+    background: white;
+    justify-content: space-between;
+}
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+    margin-left: 16px
+}
+
+.validation-summary-valid {
+    display: none;
+}
+.required::after {
+    content: "*";
+    font-weight: bold;
+    color: red;
+}
+
+.modal_rounded_background {
+    background-color: #000;
+    opacity: 0.75;
+}
+
+.modal_rounded_main {
+    border-radius: 4px;
+}
+
+    .modal_rounded_main, .modal_rounded_main input, .modal_rounded_main button {
+        font-size: 14px;
+    }
+
+.modal_rounded_inner {
+    padding: 20px;
+    background: #fff;
+    color: #000;
+    border-radius: 8px;
+}
+
+.modal_rounded_main input, .modal_rounded_main button {
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.modal_rounded_content {
+    margin: 10px 0px;
+}
+
+.modal_rounded_input {
+    margin: 20px 0px;
+}
+
+.modal_rounded_buttons {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.modal_rounded_main button {
+    background-color: #2367bf;
+    color: white;
+    padding: 10px 0px;
+    border: 0px;
+    cursor: pointer;
+    outline: none;
+    width: 100px;
+}
+
+button.modal_rounded_cancel {
+    margin-left: 10px;
+    border: 1px solid #2367bf;
+    background-color: #fff;
+    color: #2367bf;
+}

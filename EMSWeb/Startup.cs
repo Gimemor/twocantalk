@@ -27,9 +27,11 @@ namespace EMSWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllersWithViews(config => {
                 config.Filters.Add<SidebarActionFilter>();
-            }).AddRazorRuntimeCompilation();
+            }).AddRazorRuntimeCompilation().AddSessionStateTempDataProvider();
+            services.AddSession();
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddScoped<IPhrasebookService, PhrasebookService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
@@ -57,6 +59,7 @@ namespace EMSWeb
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

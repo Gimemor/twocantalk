@@ -12,7 +12,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using Nancy.Json;
-
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 namespace EMSWeb.Controllers
 {
     public class AjaxViewModel
@@ -39,13 +42,13 @@ namespace EMSWeb.Controllers
         private ISubjectService _subjectService;
         private ITeacherSupportDocumentService _teacherSupportDocumentService;
         private IKnowledgeService _knowledgeService;
-
-        public ResourcesLibController(IConfiguration configuration, 
+        private  IWebHostEnvironment _hostingEnvironment;
+        public ResourcesLibController(IConfiguration configuration,
             IResourceLibService resourceLibService,
             ILanguageService languageService,
             ISubjectService subjectService,
             IKnowledgeService knowledgeService,
-            ITeacherSupportDocumentService teacherSupportDocumentService) 
+            ITeacherSupportDocumentService teacherSupportDocumentService, IWebHostEnvironment hostingEnvironment)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
             _resourceLibService = resourceLibService;
@@ -53,6 +56,7 @@ namespace EMSWeb.Controllers
             _subjectService = subjectService;
             _teacherSupportDocumentService = teacherSupportDocumentService;
             _knowledgeService = knowledgeService;
+            _hostingEnvironment = hostingEnvironment;
         }
         public AjaxLanguageViewModel BindToAjaxLanguageViewModel(MySqlDataReader d)
         {
@@ -66,10 +70,15 @@ namespace EMSWeb.Controllers
                 Tags = d["Tags"].ToString()
             };
         }
-        
+
         // GET: ResourcesLib
-        public  async Task<ActionResult> Index()
+        public async Task<ActionResult> Index()
         {
+            LoggedInUser userSession = SessionHelper.GetObjectFromJson<LoggedInUser>(HttpContext.Session, "userObject");
+            if(userSession is null)
+            {
+                RedirectToAction("Index", "Login");
+            }
             Resources model = new Resources();
             if (TempData.Keys.Contains("Id"))
             {
@@ -83,7 +92,7 @@ namespace EMSWeb.Controllers
             ViewBag.Subjects = await _subjectService.GetList();
             ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
             ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
-            
+
             return View("List", model);
         }
 
@@ -99,8 +108,8 @@ namespace EMSWeb.Controllers
             return View();
         }
 
-       
-        public string GetLangListData(string id="0")
+
+        public string GetLangListData(string id = "0")
         {
             AjaxViewModel aViewModel = new AjaxViewModel { StudentStatue = "stat4", theDate = "12/24/2005" };
             AjaxViewModel aViewModel2 = new AjaxViewModel { StudentStatue = "stat5", theDate = "12/24/2005" };
@@ -122,7 +131,7 @@ namespace EMSWeb.Controllers
         {
             IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
             using (MySqlConnection con = new MySqlConnection(_connectionString))
-            using (MySqlCommand cmd = new MySqlCommand("SELECT f.id, f.Filename, s.name as Subjects, l.name as Language,Mime_type,Tags FROM files as f INNER JOIN languages as l ON f.language = l.id  INNER JOIN subjects as s on f.subject1 = s.id      WHERE f.deleted = 0 and f.language ="+id))
+            using (MySqlCommand cmd = new MySqlCommand("SELECT f.id, f.Filename, s.name as Subjects, l.name as Language,Mime_type,Tags FROM files as f INNER JOIN languages as l ON f.language = l.id  INNER JOIN subjects as s on f.subject1 = s.id      WHERE f.deleted = 0 and f.language =" + id))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = con;
@@ -336,6 +345,70 @@ namespace EMSWeb.Controllers
             {
                 return View();
             }
+        }
+        public FileResult downloadFile(string filePath, string fileName)
+        {
+            string wwwrootPath = _hostingEnvironment.WebRootPath;
+
+            filePath = filePath.Replace("_", "\\");
+            string fullfilePath = wwwrootPath + "\\" + filePath + "\\" + fileName;
+            string oldFile = fullfilePath;
+            string newFile = DateTime.Now.Millisecond.ToString() + "_newFile.pdf";
+            string fullpathNewFile = wwwrootPath + "\\" + filePath + "\\" + DateTime.Now.Millisecond.ToString() + "_newFile.pdf";
+            // open the reader
+            PdfReader reader = new PdfReader(oldFile);
+
+            Rectangle size = reader.GetPageSizeWithRotation(1);
+            Document document = new Document(size);
+
+            // open the writer
+            FileStream fs = new FileStream(fullpathNewFile, FileMode.Create, FileAccess.Write);
+            PdfWriter writer = PdfWriter.GetInstance(document, fs);
+            document.Open();
+
+            // the pdf content
+            PdfContentByte cb = writer.DirectContent;
+
+            // select the font properties
+            BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            cb.SetColorFill(BaseColor.DARK_GRAY);
+            cb.SetFontAndSize(bf, 8);
+            string bookmarkTex = $"Licenced to EMS site for use in the academic year {DateTime.Now.Year}/{DateTime.Now.Year + 1}";
+            try
+            {
+                LoggedInUser userSession = SessionHelper.GetObjectFromJson<LoggedInUser>(HttpContext.Session, "userObject");
+                bookmarkTex = $"Licenced to {userSession.OrganisationName}  for use in the academic year {DateTime.Now.Year}/{DateTime.Now.Year + 1}";
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            for (int pageNr = 1; pageNr <= reader.NumberOfPages; pageNr++)
+            {
+                Rectangle mediabox = reader.GetPageSize(pageNr);
+                Rectangle cropbox = reader.GetCropBox(pageNr);
+                cb.SetFontAndSize(BaseFont.CreateFont(), 12f);
+                cb.BeginText();
+                cb.ShowTextAligned(Element.ALIGN_CENTER, bookmarkTex, mediabox.GetRight(1) - 15, mediabox.GetTop(300), 90);
+                cb.EndText();
+                cb.Stroke();
+            }
+
+            // create the new page and add it to the pdf
+            PdfImportedPage page = writer.GetImportedPage(reader, 1);
+            cb.AddTemplate(page, 0, 0);
+
+            // close the streams and voilá the file should be changed :)
+            document.Close();
+            fs.Close();
+            writer.Close();
+            reader.Close();
+            IFileProvider provider = new PhysicalFileProvider(wwwrootPath + "\\" + filePath + "\\");
+            IFileInfo fileInfo = provider.GetFileInfo(newFile);
+            var readStream = fileInfo.CreateReadStream();
+            var mimeType = "application/pdf";
+            return File(readStream, mimeType, newFile);
         }
     }
 }

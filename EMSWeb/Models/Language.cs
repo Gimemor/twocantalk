@@ -10,22 +10,22 @@ namespace EMSWeb.Models
         public string Name { get; set; }
         public string Id { get; set; }
     }
-    public class Subject
+    public class _Subject
     {
         public string Name { get; set; }
         public string Id { get; set; }
     }
-    public class KnowledgeSharebyCountry
+    public class _KnowledgeSharebyCountry
     {
         public string Name { get; set; }
         public string Id { get; set; }
     }
-    public class TeachersSupportDocuments
+    public class _TeachersSupportDocuments
     {
         public string Name { get; set; }
         public string Id { get; set; }
     }
-    public class Resources
+    public class _Resources
     {
         public List<Language> Languages { get; set; }
         public List<Subject> Subjects { get; set; }

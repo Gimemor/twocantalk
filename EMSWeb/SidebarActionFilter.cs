@@ -1,4 +1,6 @@
 ﻿using EMSWeb.BusinessServices.Services.Interfaces;
+using EMSWeb.Controllers;
+using EMSWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
@@ -40,6 +42,14 @@ namespace EMSWeb
             ((Controller)context.Controller).ViewBag.MenuSubjects = await _subjectService.GetList();
             ((Controller)context.Controller).ViewBag.MenuKnowledgeSharebyCountry = await _knowledgeService.GetList();
             ((Controller)context.Controller).ViewBag.MenuTeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            var loggedInUser = context.HttpContext.Session.GetObjectFromJson<LoggedInUser>("userObject"); ;
+            if (loggedInUser != null)
+            {
+                ((Controller)context.Controller).ViewBag.PermTwoCanTalk = loggedInUser.TwoCanTalk;
+                ((Controller)context.Controller).ViewBag.PermTextTutor = loggedInUser.TextTutor;
+                ((Controller)context.Controller).ViewBag.PermTalkingTutor = loggedInUser.TalkingTutor;
+                ((Controller)context.Controller).ViewBag.PermAdmin = loggedInUser.PermAdmin;
+            }
 
         }
     }

@@ -1,17 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using EMSWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
+using Nancy.Session;
 
 namespace EMSWeb.Controllers
 {
+    using Microsoft.AspNetCore.Http;
+    using Newtonsoft.Json;
+    public static class SessionHelper
+    {
+        public static void SetObjectAsJson(this ISession session, string key, object value)
+        {
+            session.SetString(key, JsonConvert.SerializeObject(value));
+        }
+
+        public static T GetObjectFromJson<T>(this ISession session, string key)
+        {
+            var value = session.GetString(key);
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
+        }
+    }
     public class LoginController : Controller
     {
+        IConfiguration _configuration;
+        public LoginController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         // GET: Login
         public ActionResult Index()
         {
@@ -24,13 +47,15 @@ namespace EMSWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                string ubane = ValidateLogin(model.UserName, model.Password);
-                if(string.IsNullOrEmpty(ubane))
+                var user = ValidateLogin(model.UserName, model.Password);
+                if(user==null)
                 {
                     model.ErrorMessage = "Username or password is incorrect";
                 }
                 else
                 {
+                    SessionHelper.SetObjectAsJson(HttpContext.Session, "userObject", user);
+                    //List<WtrStudent> _sessionList = SessionHelper.GetObjectFromJson<List<WtrStudent>>(HttpContext.Session, "userObject");
                     return RedirectToAction("Index", "ResourcesLib");
                 }
             }
@@ -48,15 +73,19 @@ namespace EMSWeb.Controllers
             return View(model);
         }
 
-        private string ValidateLogin(string uname, string pass)
+        private LoggedInUser ValidateLogin(string uname, string pass)
         {
+            LoggedInUser user = new LoggedInUser();
             try
-            {
-                using (MySqlConnection con = new MySqlConnection("Server=localhost; Database=emsdb; UID=root; PWD=Mik70525"))
+            {               
+                var conn = _configuration.GetConnectionString("DefaultConnection");
+                using (MySqlConnection con = new MySqlConnection(conn))// "Server=localhost; Database=f1_emasuk_devresources; UID=root; PWD=@Mik70525"))
                 {
-                    using (MySqlCommand cmd = new MySqlCommand($"SELECT username  FROM users where username = '{uname}' and password_plain = '{pass}';"))
+                    using (MySqlCommand cmd = new MySqlCommand("ValidateLogin"))
                     {
-                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("Uname",uname);
+                        cmd.Parameters.AddWithValue("Pass",pass);
                         cmd.Connection = con;
                         con.Open();
 
@@ -65,7 +94,14 @@ namespace EMSWeb.Controllers
                         {
                             while (d.Read())
                             {
-                                return d["username"].ToString();
+                                user.UserName= d["username"].ToString();
+                                user.Id = d["id"].ToString();
+                                user.OrganisationName = d["organisation_name"].ToString();
+                                user.TextTutor = (bool)d["perm_text_tutor"];
+                                user.TalkingTutor = (bool)d["perm_talking_tutor"];
+                                user.TwoCanTalk = (bool)d["perm_twocan_talk"];
+                                user.PhraseBook = (bool)d["perm_phrasebook"];
+                                user.UserType = d["type"].ToString();
                             }
                         }
                     }
@@ -76,7 +112,7 @@ namespace EMSWeb.Controllers
             {
                 throw;
             }
-            return string.Empty;
+            return user;
 
         }
         // GET: Login/Details/5
