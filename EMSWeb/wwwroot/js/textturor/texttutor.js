@@ -14,7 +14,9 @@ function initTranslator(
     outputSelector, 
     keyboardContainer, 
     fromLanguageSelectorId, 
-    toLanguageSelectorId) {
+    toLanguageSelectorId,
+    clearButtonId,
+    translateButtonId) {
 
     let context = {};
     context.inputSelector = inputSelector;
@@ -23,6 +25,8 @@ function initTranslator(
     context.keyboardContainer = keyboardContainer;
     context.fromLanguageSelectorId = fromLanguageSelectorId;
     context.toLanguageSelectorId = toLanguageSelectorId;
+    context.clearButtonId = clearButtonId;
+    context.translateButtonId = translateButtonId;
 
     context.messages = [];
     $.keyboard.keyaction.enter = function( kb ) {
@@ -48,7 +52,11 @@ function initTranslator(
         }
         context.inputHandler(event); 
     });
-
+    $(clearButtonId).on('click', () => {
+        $(inputSelector).val('');
+        $(outputSelector).val('');
+    });
+    $(translateButtonId).on('click', context.inputHandler);
     $(inputSelector).on('accepted', context.inputHandler);
     $(inputSelector).on('change', function(event) { 
         //context.inputHandler(event); 
@@ -127,7 +135,9 @@ function initTextTutor(chatDefinitions) {
             '#' + element.userOutputId,
             '#' + element.keyboardContainerId, 
             '#' + element.fromLanguageSelectorId,
-            '#' + element.toLanguageSelectorId
+            '#' + element.toLanguageSelectorId,
+            '#' + element.clearButtonId,
+            '#' + element.translateButtonId
         ));
         index++;
     })

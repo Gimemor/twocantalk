@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using MySqlConnector;
-using Nancy.Json;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Hosting;
@@ -20,21 +18,7 @@ using EMSWeb.Filters;
 
 namespace EMSWeb.Controllers
 {
-    public class AjaxViewModel
-    {
-        public string theDate { get; set; }
-        public string StudentStatue { get; set; }
-    }
 
-    public class AjaxLanguageViewModel
-    {
-        public string Filename { get; set; }
-        public string Subjects { get; set; }
-        public string Language { get; set; }
-        public string Mime_type { get; set; }
-        public string Tags { get; set; }
-        public uint Id { get; set; }
-    }
 
     public class ResourcesLibController : Controller
     {
@@ -44,7 +28,7 @@ namespace EMSWeb.Controllers
         private ISubjectService _subjectService;
         private ITeacherSupportDocumentService _teacherSupportDocumentService;
         private IKnowledgeService _knowledgeService;
-        private  IWebHostEnvironment _hostingEnvironment;
+        private IWebHostEnvironment _hostingEnvironment;
         public ResourcesLibController(IConfiguration configuration,
             IResourceLibService resourceLibService,
             ILanguageService languageService,
@@ -60,28 +44,11 @@ namespace EMSWeb.Controllers
             _knowledgeService = knowledgeService;
             _hostingEnvironment = hostingEnvironment;
         }
-        public AjaxLanguageViewModel BindToAjaxLanguageViewModel(MySqlDataReader d)
-        {
-            return new AjaxLanguageViewModel
-            {
-                Id = (uint)d["Id"],
-                Filename = d["Filename"].ToString(),
-                Subjects = d["Subjects"].ToString(),
-                Language = d["Language"].ToString(),
-                Mime_type = d["Mime_type"].ToString(),
-                Tags = d["Tags"].ToString()
-            };
-        }
+
 
         // GET: ResourcesLib
         public async Task<ActionResult> Index()
         {
-            LoggedInUser userSession = SessionHelper.GetObjectFromJson<LoggedInUser>(HttpContext.Session, "userObject");
-            if(userSession is null)
-            {
-                RedirectToAction("Index", "Login");
-            }
-            Resources model = new Resources();
             if (TempData.Keys.Contains("Id"))
             {
                 ViewBag.Id = TempData["Id"];
@@ -94,8 +61,7 @@ namespace EMSWeb.Controllers
             ViewBag.Subjects = await _subjectService.GetList();
             ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
             ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
-
-            return View("List", model);
+            return View("List");
         }
 
         // GET: ResourcesLib/Details/5
@@ -110,146 +76,27 @@ namespace EMSWeb.Controllers
             return View();
         }
 
-
-        public string GetLangListData(string id = "0")
+        public async Task<AjaxResourceList> GetLanguagesById(string id = "2")
         {
-            AjaxViewModel aViewModel = new AjaxViewModel { StudentStatue = "stat4", theDate = "12/24/2005" };
-            AjaxViewModel aViewModel2 = new AjaxViewModel { StudentStatue = "stat5", theDate = "12/24/2005" };
-            AjaxViewModel aViewModel3 = new AjaxViewModel { StudentStatue = "stat6", theDate = "12/24/2005" };
-
-            IList<AjaxViewModel> data = new List<AjaxViewModel>();
-            data.Add(aViewModel);
-            data.Add(aViewModel2);
-            data.Add(aViewModel3);
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string json = js.Serialize(data);
-            json = "{ \"data\": " + json;
-            json = json + " }";
-            return json;
+            return new AjaxResourceList(await _resourceLibService.GetListByLanguage(id));
         }
 
-        public string GetLanguagesById(string id = "2")
+        public async Task<AjaxResourceList> GetSubjectssById(string id = "2")
         {
-            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
-            using (MySqlConnection con = new MySqlConnection(_connectionString))
-            using (MySqlCommand cmd = new MySqlCommand("SELECT f.id, f.Filename, s.name as Subjects, l.name as Language,Mime_type,Tags FROM files as f INNER JOIN languages as l ON f.language = l.id  INNER JOIN subjects as s on f.subject1 = s.id      WHERE f.deleted = 0 and f.language =" + id))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                con.Open();
-                // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                var d = cmd.ExecuteReader();
-                if (d.HasRows)
-                {
-                    while (d.Read())
-                    {
-                        data.Add(BindToAjaxLanguageViewModel(d));
-                    }
-                }
-                // trvResourcesByLanguages.DataBind();
-                con.Close();
-            }
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string json = js.Serialize(data);
-            json = "{ \"data\": " + json;
-            json = json + " }";
-            return json;
+            return new AjaxResourceList(await _resourceLibService.GetListBySubjects(id));
         }
 
-        public string GetSubjectssById(string id = "2")
+        public async Task<AjaxResourceList> GetKnowledgeSharedById(string id = "2")
         {
-            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
-            using (MySqlConnection con = new MySqlConnection(_connectionString))
-            {
-                string sql = $"SELECT files.id, files.filename, files.Tags as Tags, CONCAT(subjects.code, IF(isnull(subjects2.code), '', IF(subjects.code <> subjects2.code, CONCAT(', ', subjects2.code), '')), IF(isnull(subjects3.code), '', IF(subjects.code <> subjects3.code, IF(subjects2.code <> subjects3.code, CONCAT(', ', subjects3.code), ''), ''))) as subjects,";
-                sql += $" subjects.name As subject1, subjects2.name AS subject2, subjects3.name AS subject3, languages.name AS language, files.mime_type, DATE_FORMAT(files.last_uploaded_timestamp, '%d/%m/%Y') As last_uploaded_date";
-                sql += $" FROM(subjects AS subjects2 RIGHT JOIN(subjects INNER JOIN(files INNER JOIN languages ON files.language = languages.id) ON subjects.id = files.subject1) ON subjects2.id = files.subject2) LEFT JOIN subjects AS subjects3 ON files.subject3 = subjects3.id";
-                sql += $" WHERE (files.subject1={id} OR files.subject2={id} OR files.subject3={id}) AND files.deleted=0;";
-                using (MySqlCommand cmd = new MySqlCommand(sql))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = con;
-                    con.Open();
-                    // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                    var d = cmd.ExecuteReader();
-                    if (d.HasRows)
-                    {
-                        while (d.Read())
-                        {
-                            data.Add(BindToAjaxLanguageViewModel(d));
-                        }
-                    }
-                    // trvResourcesByLanguages.DataBind();
-                    con.Close();
-                }
-            }
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string json = js.Serialize(data);
-            json = "{ \"data\": " + json;
-            json = json + " }";
-            return json;
+            return new AjaxResourceList(await _resourceLibService.GetListByKnowledgeShared(id));
         }
-        public string GetKnowledgeSharedById(string id = "2")
+
+        public async Task<AjaxResourceList> GetTeachersDocById(string id = "2")
         {
-            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
-            using (MySqlConnection con = new MySqlConnection(_connectionString))
-            {
-                using (MySqlCommand cmd = new MySqlCommand($"SELECT *, '' as Subjects, 'English' as Language, '' as Tags FROM country_knowledge_share_files WHERE country_knowledge_share_files.deleted = 0 AND country_knowledge_share_files.country_id = {id} ORDER BY country_knowledge_share_files.filename;"))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = con;
-                    con.Open();
-                    // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                    var d = cmd.ExecuteReader();
-                    if (d.HasRows)
-                    {
-                        while (d.Read())
-                        {
-                            data.Add(BindToAjaxLanguageViewModel(d));
-                        }
-                    }
-                    // trvResourcesByLanguages.DataBind();
-                    con.Close();
-                }
-            }
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string json = js.Serialize(data);
-            json = "{ \"data\": " + json;
-            json = json + " }";
-            return json;
+            return new AjaxResourceList(await _resourceLibService.GetListByTeachersDoc(id));
         }
-        public string GetTeachersDocById(string id = "2")
-        {
-            IList<AjaxLanguageViewModel> data = new List<AjaxLanguageViewModel>();
-            using (MySqlConnection con = new MySqlConnection(_connectionString))
-            using (MySqlCommand cmd = new MySqlCommand("SELECT Id, filename,'' Subjects,'English' Language,Mime_type, '' as Tags  FROM files_teachers_support_documents WHERE deleted = 0 Order By filename;"))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                con.Open();
-                // trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
-                var d = cmd.ExecuteReader();
-                if (d.HasRows)
-                {
-                    while (d.Read())
-                    {
-                        data.Add(BindToAjaxLanguageViewModel(d));
-                    }
-                }
-                // trvResourcesByLanguages.DataBind();
-                con.Close();
-            }
 
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string json = js.Serialize(data);
-            json = "{ \"data\": " + json;
-            json = json + " }";
-            return json;
-        }
+
         // GET: /ResourcesLib/Language/5
         [HttpGet]
         public ActionResult ByLanguage(int id)

@@ -94,7 +94,7 @@ namespace EMSWeb.Controllers
                         {
                             while (d.Read())
                             {
-                                user.UserName= d["username"].ToString();
+                                user.UserName = d["username"].ToString();
                                 user.Id = d["id"].ToString();
                                 user.OrganisationName = d["organisation_name"].ToString();
                                 user.TextTutor = (bool)d["perm_text_tutor"];
@@ -104,6 +104,11 @@ namespace EMSWeb.Controllers
                                 user.UserType = d["type"].ToString();
                             }
                         }
+                        else 
+                        {
+                            return null;
+                        }
+
                     }
                     con.Close();
                 }

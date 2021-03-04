@@ -32,7 +32,9 @@ function initTranslator(
     outputSelector, 
     keyboardContainer, 
     fromLanguageSelectorId, 
-    toLanguageSelectorId) {
+    toLanguageSelectorId,
+    clearButtonId,
+    translateButtonId) {
 
     let context = {};
     context.inputSelector = inputSelector;
@@ -60,6 +62,11 @@ function initTranslator(
             value: Object.assign({}, message)
         })
     };
+    $(clearButtonId).on('click', () => {
+        $(inputSelector).val('');
+        $(outputSelector).val('');
+    });
+    $(translateButtonId).on('click', context.inputHandler);
 
     $(inputSelector).on('keyup', function(event) { 
         if(event.key != 'Enter') {
@@ -75,7 +82,7 @@ function initTranslator(
     });
     context.sayText = function(text, languageId) {
         selectScene(context.sceneRef);
-        sayText(text, 1, languageId, 2);
+        sayText(text, 1, languageId, 2, 'D', 1);
     }
     context.addMessage = function(message, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
         message.sourceMessage = sourceText;
@@ -159,7 +166,9 @@ function initTalkTutor(chatDefinitions) {
             '#' + element.userOutputId,
             '#' + element.keyboardContainerId, 
             '#' + element.fromLanguageSelectorId,
-            '#' + element.toLanguageSelectorId
+            '#' + element.toLanguageSelectorId,
+            '#' + element.clearButtonId,
+            '#' + element.translateButtonId,
         ));
         index++;
     })

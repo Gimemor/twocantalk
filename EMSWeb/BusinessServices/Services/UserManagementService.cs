@@ -125,12 +125,15 @@ namespace EMSWeb.BusinessServices.Services
 
 		public async Task Update(User user)
 		{
+			var passw = !string.IsNullOrEmpty(user.PasswordPlain)
+				? user.PasswordPlain.ToSqlValue()
+				: "password_plain";
 			var commandText = @$"
 			UPDATE users SET 
 				 username = {user.Username.ToSqlValue()}, 
 				 organisation_name = {user.OrganizationName.ToSqlValue()},
 				 password = {user.Password.ToSqlValue()}, 
-				 password_plain = {user.PasswordPlain.ToSqlValue()}, 
+				 password_plain = {passw}, 
 				 secondary_password = {user.SecondaryPassword.ToSqlValue()}, 
 				 perm_any_browser = {user.PermAnyBrowser.ToSqlValue()}, 
 				 perm_vault = {user.PermVault.ToSqlValue()}, 

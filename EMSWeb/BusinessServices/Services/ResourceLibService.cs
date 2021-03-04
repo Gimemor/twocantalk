@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -21,6 +22,176 @@ namespace EMSWeb.BusinessServices.Services
 			_connectionString = configuration.GetConnectionString("DefaultConnection");
 			_hostingEnvironment = hostingEnvironment;
 		}
+
+		public ResourceListEntry BindToResourcesListEntry(MySqlDataReader d)
+		{
+			
+			return new ResourceListEntry
+			{
+				Id = (uint)d["Id"],
+				Filename = d["Filename"].ToString(),
+				Subject1 = (string)((d["Subject1"] == DBNull.Value) ? null : d["Subject1"]),
+				Subject2 = (string)((d["Subject2"] == DBNull.Value) ? null : d["Subject2"]),
+				Subject3 = (string)((d["Subject3"] == DBNull.Value) ? null : d["Subject3"]),
+				Language = d["Language"].ToString(),
+				Mime_type = d["Mime_type"].ToString(),
+				Tags = d["Tags"].ToString()
+			};
+		}
+
+		public async Task<List<ResourceListEntry>> GetListByLanguage(string id)
+		{
+			List<ResourceListEntry> data = new List<ResourceListEntry>();
+			using (MySqlConnection con = new MySqlConnection(_connectionString))
+			using (MySqlCommand cmd = new MySqlCommand(@"
+				SELECT 
+					f.id,
+					f.Filename,
+					s.name as subject1,
+					s2.name as subject2,
+					s3.name as subject3,
+					l.name as Language,
+					Mime_type,
+					Tags FROM files as f 
+				LEFT JOIN languages as l ON f.language = l.id  
+				LEFT JOIN subjects as s on f.subject1 = s.id AND f.subject1 IS NOT NULL
+				LEFT JOIN subjects as s2 on f.subject2 = s2.id AND f.subject2 IS NOT NULL
+				LEFT JOIN subjects as s3 on f.subject3 = s3.id AND f.subject3 IS NOT NULL
+				WHERE f.deleted = 0 and f.language =" + id))
+			{
+				cmd.CommandType = CommandType.Text;
+				cmd.Connection = con;
+				await con.OpenAsync();
+				// trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+				var d = await cmd.ExecuteReaderAsync();
+				if (d.HasRows)
+				{
+					while (await d.ReadAsync())
+					{
+						data.Add(BindToResourcesListEntry(d));
+					}
+				}
+				// trvResourcesByLanguages.DataBind();
+				con.Close();
+			}
+			return data;
+		}
+
+		public async Task<List<ResourceListEntry>> GetListBySubjects(string id = "2")
+		{
+			List<ResourceListEntry> data = new List<ResourceListEntry>();
+			string sql = @$"
+								SELECT
+					   files.id,
+					   files.filename,
+					   files.Tags as Tags,
+					   files.subject1 as subjectId1,
+					   files.subject2 as subjectId2,
+					   files.subject3 as subjectId3,
+					   subjects.name As subject1,
+					   subjects2.name AS subject2,
+					   subjects3.name AS subject3,
+					   languages.name AS language,
+					   files.mime_type,
+					   DATE_FORMAT(files.last_uploaded_timestamp, '%d/%m/%Y') As last_uploaded_date
+				FROM files
+					LEFT JOIN subjects AS subjects on (files.subject1 = subjects.id AND files.subject1 IS NOT NULL)
+					LEFT JOIN subjects AS subjects2 on (files.subject2 = subjects2.id AND files.subject2 IS NOT NULL)
+					LEFT JOIN subjects AS subjects3 on (files.subject3 = subjects3.id  AND files.subject3 IS NOT NULL)
+					LEFT JOIN languages AS languages on (files.language = languages.id)
+				WHERE (files.subject1={id} OR files.subject2={id} OR files.subject3={id}) AND files.deleted=0
+			";
+			using (MySqlConnection con = new MySqlConnection(_connectionString))
+			using (MySqlCommand cmd = new MySqlCommand(sql))
+			{
+				cmd.CommandType = CommandType.Text;
+				cmd.Connection = con;
+				await con.OpenAsync();
+				// trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+				var d = await cmd.ExecuteReaderAsync();
+				if (d.HasRows)
+				{
+					while (await d.ReadAsync())
+					{
+						data.Add(BindToResourcesListEntry(d));
+					}
+				}
+				// trvResourcesByLanguages.DataBind();
+				await con.CloseAsync();
+			}
+			return data;
+		}
+
+		public async Task<List<ResourceListEntry>> GetListByKnowledgeShared(string id = "2")
+		{
+			List<ResourceListEntry> data = new List<ResourceListEntry>();
+			using (MySqlConnection con = new MySqlConnection(_connectionString))
+			using (MySqlCommand cmd = new MySqlCommand(@$"
+					SELECT 
+						*,
+						'' as Subject1, 
+						'' as Subject2, 
+						'' as Subject3,
+						'English' as Language,
+						'' as Tags 
+					FROM country_knowledge_share_files
+					WHERE 
+						country_knowledge_share_files.deleted = 0 AND country_knowledge_share_files.country_id = {id} 
+					ORDER BY country_knowledge_share_files.filename;"))
+			{
+				cmd.CommandType = CommandType.Text;
+				cmd.Connection = con;
+				await con.OpenAsync();
+				// trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+				var d = cmd.ExecuteReader();
+				if (d.HasRows)
+				{
+					while (await d.ReadAsync())
+					{
+						data.Add(BindToResourcesListEntry(d));
+					}
+				}
+				// trvResourcesByLanguages.DataBind();
+				await con.CloseAsync();
+			}
+			return data;
+		}
+
+		public async Task<List<ResourceListEntry>> GetListByTeachersDoc(string id = "2")
+		{
+			List<ResourceListEntry> data = new List<ResourceListEntry>();
+			using (MySqlConnection con = new MySqlConnection(_connectionString))
+			using (MySqlCommand cmd = new MySqlCommand($@"
+				SELECT 
+					Id, 
+					filename,
+					'' Subject1,
+					'' Subject2,
+					'' Subject3,
+					'English' Language,
+					Mime_type, 
+					'' as Tags  
+				FROM files_teachers_support_documents WHERE deleted = 0 Order By filename;"))
+			{
+				cmd.CommandType = CommandType.Text;
+				cmd.Connection = con;
+				await con.OpenAsync();
+				// trvResourcesByLanguages.DataSource = cmd.ExecuteReader();
+				var d = await cmd.ExecuteReaderAsync();
+				if (d.HasRows)
+				{
+					while (await d.ReadAsync())
+					{
+						data.Add(BindToResourcesListEntry(d));
+					}
+				}
+				// trvResourcesByLanguages.DataBind();
+				await con.CloseAsync();
+			}
+			return data;
+		}
+
+
 
 		public async Task<ResourceModel> Get(int id)
 		{

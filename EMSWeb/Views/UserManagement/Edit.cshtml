@@ -12,12 +12,13 @@
 <partial name="_ValidationScriptsPartial" />
 <form asp-action="Save" asp-controller="UserManagement" method="post">
     <div class="row p-8 d-flex flex-row user-managment-header">
-        <div class="p-8">
+        <div class="p-8  d-flex flex-row " >
+            <a href="/UserManagement" id="#backBtn" class="btn btn-default mr-16">Back</a>
             <h5>User Management</h5>
         </div>
         <div class="p-8">
+
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a href="/UserManagement" id="#backBtn" class="btn btn-light">Back</a>
         </div>
     </div>
     <div class="row user-managment-header">
@@ -30,7 +31,7 @@
                 <div>
                     <div class="form-validation">
                         @Html.HiddenFor(x => x.Id)
-
+                        @Html.HiddenFor(x => x.Type)
                         <div class="form-validate row">
                             <div class="col-lg-6">
                                 <div class="form-group row">
@@ -50,7 +51,7 @@
                                 <div class="form-group row">
                                     <label class="col-lg-3 col-form-label" for="val-email">Password </label>
                                     <div class="col-lg-9">
-                                        @Html.PasswordFor(x => x.Password, new { Class = "form-control", Placeholder = "choose a safe one..." })
+                                        @Html.PasswordFor(x => x.PasswordPlain, new { Class = "form-control", Placeholder = "choose a safe one..." })
                                     </div>
                                 </div>
 

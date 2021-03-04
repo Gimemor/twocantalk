@@ -21,13 +21,16 @@
 .pl-8 {
     padding-left: 8px;
 }
+.mr-16 {
+    margin-right: 16px;
+}
 .chat-history {
     min-height: 150px;
     overflow: auto;
     width: 100%;
     overflow: auto;
     height: 100%;
-    background: white;
+    background: aliceblue;
     padding: 8px;
 }
 .chat-input {

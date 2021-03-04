@@ -263,6 +263,8 @@
                     <a href="/ResourcesLib/Delete?id=' + oData.id + '" class= "delete title="" data-toggle="tooltip" data-original-title="Delete" >\
                     <i class="fa fa-trash-o"></i></a><a href="/ResourcesLib/downloadFile?filePath=files_knowledge-share&fileName=' + encodeURI(oData.filename) + '"  class= "delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-download" aria-hidden="true"></i></a>');
         }
+        
+
         function initLinksresources(nTd, sData, oData, iRow, iCol) {
             console.log(nTd, sData, oData, iRow, iCol);
             $(nTd).html('\
@@ -294,7 +296,8 @@
                       }
                             },
                             {
-                                "data": "subjects"
+                                "data": "subjects",
+                                fnCreatedCell: 
                             },
                             {
                                 "data": "language"

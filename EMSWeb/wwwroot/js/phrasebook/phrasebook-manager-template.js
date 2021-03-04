@@ -14,6 +14,7 @@
             <div><button title="Add a new phrase" type="button" class="btn btn-light" id="<%=addPhraseButtonId%>"><i class="fa fa-folder-open" aria-hidden="true"></i> Add Phrase</button></div>\
             <div><button title="Modify" type="button" class="btn btn-light" id="<%=modifyButtonId%>"><i class="fa fa-pencil-square-o"></i> Modify</button></div>\
             <div><button title="Delete" type="button" class="btn btn-light" id="<%=deleteButtonId%>"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </button></div>\
+            <div><button title="Clear selection" type="button" class="btn btn-light" id="<%=clearSelectButtonId%>"><i class="fa fa-ban" aria-hidden="true"></i> Clear Selection </button></div>\
         </div>\
     </div>\
     <div class="row pb-8 pt-8" style="display: contents">\

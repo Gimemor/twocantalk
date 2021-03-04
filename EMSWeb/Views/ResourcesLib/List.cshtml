@@ -190,7 +190,16 @@
              $(nTd).html('<a href="/ResourcesLib/downloadFile?filePath=files_knowledge-share&fileName=' + encodeURI(oData.filename) + '"  class= "delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-download" aria-hidden="true"></i></a>');
         }
     }
-
+    function createSubjectCell(nTd, sData, oData, iRow, iCol) {
+        let text = oData.subject1;
+        if (oData.subject2)
+            text += `, ${oData.subject2}`;
+        if (oData.subject3)
+            text += `, ${oData.subject3}`;
+        if (text[0] == ",")
+            text = text.substring(2)
+        $(nTd).html(text);
+    }
     function setLanguageMode(id) {
         $("#main_res").css("display", "block");
         $("#main_msg").css("display", "none");
@@ -210,7 +219,8 @@
                     }
                 },
                 {
-                    "data": "subjects"
+                    "data": "subject1",
+                    fnCreatedCell: createSubjectCell
                 },
                 {
                     "data": "language"
@@ -242,7 +252,8 @@
                         }
                     },
                     {
-                        "data": "subjects"
+                        "data": "subject1",
+                        fnCreatedCell: createSubjectCell
                     },
                     {
                         "data": "language"
@@ -267,13 +278,15 @@
                     "ajax": '/ResourcesLib/GetKnowledgeSharedById/' + id,
                     columns: [
                         {
-                            "data": "filename", "name": "filename",
+                            "data": "filename",
+                            "name": "filename",
                             fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-                                $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='/ResourcesLib/downloadFile?filePath=files_knowledge-share&fileName=" +oData.filename + "' " + oData.filename + "</a>");
+                                $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='/ResourcesLib/downloadFile?filePath=files_knowledge-share&fileName=" +oData.filename + "'>" + oData.filename + "</a>");
                             }
                         },
                         {
-                            "data": "subjects"
+                             "data": "subject1",
+                            fnCreatedCell: createSubjectCell
                         },
                         {
                             "data": "language"
@@ -305,7 +318,8 @@
                         }
                     },
                     {
-                        "data": "subjects"
+                        "data": "subject1",
+                        fnCreatedCell: createSubjectCell
                     },
                     {
                         "data": "language"

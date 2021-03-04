@@ -11,7 +11,8 @@
     get addPhraseButtonId() { return '#' + this.phrasebookDefinition.addPhraseButtonId; }
     get addCategoryButtonId() { return '#' + this.phrasebookDefinition.addCategoryButtonId; }
     get modifyButtonId() { return '#' + this.phrasebookDefinition.modifyButtonId; }
-   
+    get clearSelectButtonId() { return '#' + this.phrasebookDefinition.clearSelectButtonId; }
+
     parseTree(rawTree, parentId) {
         if (!rawTree) {
             return;
@@ -76,6 +77,7 @@
             let selectedData = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
             $(this.deleteButtonId).prop('disabled', selectedData.length === 0);
             $(this.modifyButtonId).prop('disabled', selectedData.length === 0 || selectedData.length > 1);
+            $(this.clearSelectButtonId).prop('disabled', selectedData.length === 0);
         }
         $(this.phrasebookTreeId).on('nodeChecked', handleButtonState);
         $(this.phrasebookTreeId).on('nodeUnchecked', handleButtonState);
@@ -95,7 +97,9 @@
             deletePhrases(arrayIds);
             getTree(languageId).done((rawTree) => this.setTree(rawTree));
         });
-
+        $(this.clearSelectButtonId).on('click', () => {
+            $(this.phrasebookTreeId).treeview('uncheckAll', { silent: true });
+        })
         $(this.addPhraseButtonId).on('click', (evt) => {
             evt.preventDefault();
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked && x.list)
@@ -106,7 +110,6 @@
                 parentId = 0;
             } else if (arrayIds.length > 0) {
                 parentId = arrayIds[0].id;
-                oldtext = arrayIds[0].text;
             } else {
                 alert('Please, select the only category to be parent for a new phrase');
                 return;

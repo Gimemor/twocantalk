@@ -27,7 +27,7 @@
     width: 100%;
     overflow: auto;
     height: 100%;
-    background: white;
+    background: aliceblue;
     padding: 8px;
 }
 .chat-input {

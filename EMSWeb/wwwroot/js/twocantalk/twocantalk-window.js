@@ -279,8 +279,8 @@ class ChatContext {
     }
 
     handleCreatePdfClick = () => {
-        DayPilot.Modal.prompt('Please enter that Teacher name:', { theme: "modal_rounded" }).then((firstNameResult) => {
-            DayPilot.Modal.prompt('Please enter the Student name:', { theme: "modal_rounded" }).then((secondNameResult) => {
+        DayPilot.Modal.prompt('Enter Person 1 Name (Left):', { theme: "modal_rounded" }).then((firstNameResult) => {
+            DayPilot.Modal.prompt('Enter Person 2 Name (Right):', { theme: "modal_rounded" }).then((secondNameResult) => {
                 const firstName = firstNameResult.result;
                 const secondName = secondNameResult.result;
                 const messageKey = 'translatedText';

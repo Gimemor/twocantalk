@@ -18,13 +18,19 @@ var chatTemplate = '\
             </div>\
         </div>\
         <div class="row pb-8">\
+            <div class="col-lg-12 d-flex flex-wrap">\
+                  <div><button title="Clear" type="button" class="btn btn-light" id="<%=clearButtonId%>"><i class="fa fa-ban" aria-hidden="true"></i> Clear </button></div>\
+                  <div><button title="Translate" type="button" class="btn btn-primary" id="<%=translateButtonId%>"><i class="fa fa-play" aria-hidden="true"></i> Translate </button></div>\
+            </div> \
+        </div>\
+        <div class="row pb-8">\
             <div class="col-lg-12">\
                 <textarea id="<%=userInputId%>" class="chat-input textarea"></textarea>\
             </div> \
         </div>\
         <div class="row pb-8">\
             <div class="col-lg-12">\
-                <textarea readonly id="<%=userOutputId%>" class="chat-input textarea"></textarea>\
+                <textarea readonly id="<%=userOutputId%>" class="chat-history textarea"></textarea>\
             </div> \
         </div>\
         <div class="row pb-8">\

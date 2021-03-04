@@ -190,6 +190,7 @@ namespace EMSWeb.BusinessServices.Services
                     }
                 }
                 await con.CloseAsync();
+                parent.ChildLists.OrderBy(x => x.ChildLists.Count > 0 || x.Phrases.Count > 0);
             }
         }
 
