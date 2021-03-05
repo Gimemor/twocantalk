@@ -69,7 +69,7 @@ namespace EMSWeb.BusinessServices.Services
 					perm_twocan_talk, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, 
 					type, membership_number, active, reseller_id, concurrent_sessions_limit, ip_address_whitelist, contact_forename,  
 					contact_surname, address_line_1, address_line_2, address_line_3, address_line_4, address_postcode, timestamp_created, enableChangePassword
-				FROM users";
+				FROM users ORDER BY organisation_name, username";
 			 
 			var list = new List<User>();
 			using (var connection = new MySqlConnection(_connectionSettings))

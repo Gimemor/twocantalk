@@ -26,64 +26,48 @@ namespace EMSWeb.BusinessServices.Services
                 ParentId = 0,
                 Name = "Root"
             };
-            try
-            {
-                {
-                    await GetPhrasesForList(list);
-                    await GetChildren(list);
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
+            await GetPhrasesForList(list);
+            await GetChildren(list);
             return list;
         }
 
-        public async Task Delete(DeletePhrasebookDto[] toDelete) {
-            try
+        public async Task Delete(DeletePhrasebookDto[] toDelete) 
+        {
+            using (MySqlConnection con = new MySqlConnection(_connectionString)) 
             {
-                using (MySqlConnection con = new MySqlConnection(_connectionString)) 
+                await con.OpenAsync();
+                var phrasesIds = toDelete.Where(x => !x.IsList).Select(x => x.Id).ToList();
+                if(phrasesIds.Any()) 
                 {
-                    await con.OpenAsync();
-                    var phrasesIds = toDelete.Where(x => !x.IsList).Select(x => x.Id).ToList();
-                    if(phrasesIds.Any()) 
+                    var phrasesIdsString = phrasesIds.Select(x => x.ToString()).Aggregate((value, acc) => acc + ", " + value);
+                    phrasesIdsString = phrasesIdsString.Trim();
+                    if (phrasesIdsString[^1] == ',')
                     {
-                        var phrasesIdsString = phrasesIds.Select(x => x.ToString()).Aggregate((value, acc) => acc + ", " + value);
-                        phrasesIdsString = phrasesIdsString.Trim();
-                        if (phrasesIdsString[^1] == ',')
-                        {
-                            phrasesIdsString = phrasesIdsString.Substring(0, phrasesIdsString.Length - 1);
-                        }
-                        var commandText = $"UPDATE phrases SET deleted = 1 WHERE id IN({phrasesIdsString})";
-                        using (var cmd = new MySqlCommand(commandText, con))
-                        {
-                            await cmd.ExecuteNonQueryAsync();
-                        }
+                        phrasesIdsString = phrasesIdsString.Substring(0, phrasesIdsString.Length - 1);
                     }
-
-                    var listsIds = toDelete.Where(x => x.IsList).Select(x => x.Id).ToList();
-                    if(listsIds.Any()) 
+                    var commandText = $"UPDATE phrases SET deleted = 1 WHERE id IN({phrasesIdsString})";
+                    using (var cmd = new MySqlCommand(commandText, con))
                     {
-                        var listsIdsString = listsIds.Select(x => x.ToString()).Aggregate((acc, value) => acc + ", " + value);
-                        listsIdsString = listsIdsString.Trim();
-                        if (listsIdsString[^1] == ',')
-                        {
-                            listsIdsString = listsIdsString.Substring(0, listsIdsString.Length - 1);
-                        }
-                        var commandText = $"UPDATE phrase_lists SET deleted = 1 WHERE id IN({listsIdsString})";
-                        using (var cmd = new MySqlCommand(commandText, con))
-                        {
-                            await cmd.ExecuteNonQueryAsync();
-                        }
+                        await cmd.ExecuteNonQueryAsync();
                     }
-                    await con.CloseAsync();
-
                 }
-            }
-            catch (Exception ex)
-            {
 
+                var listsIds = toDelete.Where(x => x.IsList).Select(x => x.Id).ToList();
+                if(listsIds.Any()) 
+                {
+                    var listsIdsString = listsIds.Select(x => x.ToString()).Aggregate((acc, value) => acc + ", " + value);
+                    listsIdsString = listsIdsString.Trim();
+                    if (listsIdsString[^1] == ',')
+                    {
+                        listsIdsString = listsIdsString.Substring(0, listsIdsString.Length - 1);
+                    }
+                    var commandText = $"UPDATE phrase_lists SET deleted = 1 WHERE id IN({listsIdsString})";
+                    using (var cmd = new MySqlCommand(commandText, con))
+                    {
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+                await con.CloseAsync();
             }
         }
 
@@ -141,24 +125,17 @@ namespace EMSWeb.BusinessServices.Services
 
         public async Task Modify(ModifyNodeDto modifyNodeDto)
         {
-            try
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
-                using (MySqlConnection con = new MySqlConnection(_connectionString))
+                await con.OpenAsync();
+                var commandText = modifyNodeDto.IsList ?
+                    $"UPDATE phrase_lists SET name = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'" :
+                    $"UPDATE phrases SET content = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'";
+                using (var cmd = new MySqlCommand(commandText, con))
                 {
-                    await con.OpenAsync();
-                    var commandText = modifyNodeDto.IsList ?
-                        $"UPDATE phrase_lists SET name = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'" :
-                        $"UPDATE phrases SET content = '{modifyNodeDto.Name}' WHERE id = '{modifyNodeDto.Id}'";
-                    using (var cmd = new MySqlCommand(commandText, con))
-                    {
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                    await con.CloseAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
-            }
-            catch (Exception ex)
-            {
-
+                await con.CloseAsync();
             }
         }
 
@@ -166,7 +143,7 @@ namespace EMSWeb.BusinessServices.Services
         {
             using (MySqlConnection con = new MySqlConnection(_connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
-                    $"SELECT id, name FROM phrase_lists WHERE parent_id = {parent.Id} AND deleted = 0 ORDER BY sort_order;"
+                    $"SELECT id, name FROM phrase_lists WHERE parent_id = {parent.Id} AND deleted = 0 ORDER BY name, sort_order"
                 ))
             {
                 cmd.CommandType = CommandType.Text;
@@ -198,7 +175,7 @@ namespace EMSWeb.BusinessServices.Services
         {
             using (MySqlConnection con = new MySqlConnection(_connectionString))
             using (MySqlCommand cmd = new MySqlCommand(
-                $"SELECT id, phrase_list_id, content FROM phrases WHERE deleted = 0 AND phrase_list_id = {parent.Id} ORDER BY sort_order"
+                $"SELECT id, phrase_list_id, content FROM phrases WHERE deleted = 0 AND phrase_list_id = {parent.Id} ORDER BY content, sort_order"
             ))
             {
                 cmd.CommandType = CommandType.Text;

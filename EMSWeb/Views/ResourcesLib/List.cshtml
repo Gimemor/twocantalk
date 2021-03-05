@@ -4,16 +4,6 @@
     Layout = "_LayoutWithSidebar";
 }
 
-<div class="header">
-    <div class="pull-left">
-        <div class="logo"><a href="#"> <img src="../images/logo.png" height="40" alt="" /></a></div>
-        <div class="hamburger sidebar-toggle">
-            <span class="line"></span>
-            <span class="line"></span>
-            <span class="line"></span>
-        </div>
-    </div>
-</div>
 <div class="content-wrap">
     <div class="main" id="main_msg">
         <div class="container-fluid">
@@ -196,7 +186,7 @@
             text += `, ${oData.subject2}`;
         if (oData.subject3)
             text += `, ${oData.subject3}`;
-        if (text[0] == ",")
+        if (text && text[0] == ",")
             text = text.substring(2)
         $(nTd).html(text);
     }

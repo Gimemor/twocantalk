@@ -134,11 +134,11 @@ function initChat(
     };
     context.oldInputValue = null;
     context.inputHandler = function(event) {
-        let value = $(inputSelector).val()
+        let value = $(inputSelector).val().trim();
+        $(inputSelector).val('');
         if(!value || value.length <= 0) {
             return;
         }
-        $(inputSelector).val('');
         context.oldInputValue = value;
         let message = { text: value, time: new Date(), type: MESSAGE_TYPE.sent, languageId: context.languageId };
         const from = languages.find(x => x.id == context.connectedContext.languageId);

@@ -3,6 +3,7 @@ using EMSWeb.BusinessServices.Services.Interfaces;
 using EMSWeb.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using System;
@@ -224,6 +225,8 @@ namespace EMSWeb.BusinessServices.Services
 
 		public async Task Create(ResourceModel model)
 		{
+			model.Filename = model.FormFile?.FileName ?? $"File_{DateTime.Now.Date}";
+			model.MimeType = GetMime(model.Filename);
 			using (var connection = new MySqlConnection(_connectionString))
 			using (var command = new MySqlCommand(@$"
 				INSERT INTO files(filename, subject1, subject2, subject3, mime_type, tags, language, last_uploaded_timestamp) VALUES (
@@ -248,9 +251,20 @@ namespace EMSWeb.BusinessServices.Services
 				await connection.CloseAsync();
 			}
 		}
-
+		public string GetMime(string fileName)
+		{
+			var provider = new FileExtensionContentTypeProvider();
+			string contentType;
+			if (!provider.TryGetContentType(fileName, out contentType))
+			{
+				contentType = "application/octet-stream";
+			}
+			return contentType;
+		}
 		public async Task Update(ResourceModel model)
 		{
+			model.Filename = model.FormFile?.FileName ?? $"File_{DateTime.Now.Date}";
+			model.MimeType = GetMime(model.Filename);
 			using (var connection = new MySqlConnection(_connectionString))
 			using (var command = new MySqlCommand(@$"
 				UPDATE files SET filename = {model.Filename.ToSqlValue()},

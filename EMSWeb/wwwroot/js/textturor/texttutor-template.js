@@ -29,9 +29,13 @@ var chatTemplate = '\
             </div> \
         </div>\
         <div class="row pb-8">\
-            <div class="col-lg-12">\
-                <textarea readonly id="<%=userOutputId%>" class="chat-history textarea"></textarea>\
-            </div> \
+            <div class="col-lg-12 chat-history-container">\
+                <table class="chat-history table" id="<%=userOutputId%>">\
+                    <tbody>\
+                        <tr></tr>\
+                    </tbody>\
+                </table>\
+            </div>\
         </div>\
         <div class="row pb-8">\
             <div class="col-lg-12 keyboard-container" id="<%=keyboardContainerId%>">\

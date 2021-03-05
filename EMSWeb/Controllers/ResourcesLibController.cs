@@ -45,18 +45,9 @@ namespace EMSWeb.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-
-        // GET: ResourcesLib
+         
         public async Task<ActionResult> Index()
         {
-            if (TempData.Keys.Contains("Id"))
-            {
-                ViewBag.Id = TempData["Id"];
-            }
-            if (TempData.Keys.Contains("Mode"))
-            {
-                ViewBag.Mode = TempData["Mode"];
-            }
             ViewBag.Languages = await _languageService.GetList();
             ViewBag.Subjects = await _subjectService.GetList();
             ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
@@ -99,35 +90,51 @@ namespace EMSWeb.Controllers
 
         // GET: /ResourcesLib/Language/5
         [HttpGet]
-        public ActionResult ByLanguage(int id)
+        public async Task<ActionResult> ByLanguage(int id)
         {
-            TempData["Id"] = id;
-            TempData["Mode"] = "language";
-            return RedirectToAction("Index");
+            ViewBag.Id = id;
+            ViewBag.Mode = "language";
+            ViewBag.Languages = await _languageService.GetList();
+            ViewBag.Subjects = await _subjectService.GetList();
+            ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
+            ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            return View("List");
         }
 
         [HttpGet]
-        public ActionResult BySubject(int id)
+        public async Task<ActionResult> BySubject(int id)
         {
-            TempData["Id"] = id;
-            TempData["Mode"] = "subject";
-            return RedirectToAction("Index");
+            ViewBag.Id = id;
+            ViewBag.Mode = "subject";
+            ViewBag.Languages = await _languageService.GetList();
+            ViewBag.Subjects = await _subjectService.GetList();
+            ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
+            ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            return View("List");
         }
 
         [HttpGet]
-        public ActionResult ByKnowledgeShared(int id)
+        public async Task<ActionResult> ByKnowledgeShared(int id)
         {
-            TempData["Id"] = id;
-            TempData["Mode"] = "knowledgeshared";
-            return RedirectToAction("Index");
+            ViewBag.Id = id;
+            ViewBag.Mode = "knowledgeshared";
+            ViewBag.Languages = await _languageService.GetList();
+            ViewBag.Subjects = await _subjectService.GetList();
+            ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
+            ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            return View("List");
         }
 
         [HttpGet]
-        public ActionResult ByTeacherDoc(int id)
+        public async Task<ActionResult> ByTeacherDoc(int id)
         {
-            TempData["Id"] = id;
-            TempData["Mode"] = "teacherdoc";
-            return RedirectToAction("Index");
+            ViewBag.Id = id;
+            ViewBag.Mode = "teacherdoc";
+            ViewBag.Languages = await _languageService.GetList();
+            ViewBag.Subjects = await _subjectService.GetList();
+            ViewBag.KnowledgeSharebyCountry = await _knowledgeService.GetList();
+            ViewBag.TeacherSupportDocuments = await _teacherSupportDocumentService.GetList();
+            return View("List");
         }
 
         // GET: ResourcesLib/Edit/5
