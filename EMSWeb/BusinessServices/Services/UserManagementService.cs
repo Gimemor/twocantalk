@@ -61,15 +61,43 @@ namespace EMSWeb.BusinessServices.Services
 				Type = d["type"].ToString()
 			};
 		}
-		public async Task<PagingResult<User>> GetList(Paging paging)
+		public async Task<PagingResult<User>> GetList(UserFilter filter)
 		{
-			var commandText = @"
+
+			var whereClause = "";
+			if (!string.IsNullOrWhiteSpace(filter.OrganizationName))
+			{
+				whereClause += $"organisation_name LIKE '%{filter.OrganizationName}%'";
+			}
+			if (!string.IsNullOrWhiteSpace(filter.UserName))
+			{
+				if (whereClause.Length > 0)
+				{
+					whereClause += " AND ";
+				}
+				whereClause += $"username LIKE '%{filter.UserName}%'";
+			}
+			if (filter.Active != null)
+			{
+				if (whereClause.Length > 0)
+				{
+					whereClause += " AND ";
+				}
+				whereClause += $"active = {(filter.Active.Value? '1' : '0')}";
+			}
+
+			if (whereClause.Length > 0)
+			{
+				whereClause = "WHERE " + whereClause;
+			}
+
+			var commandText = $@"
 				SELECT id, username, organisation_name, password, password_plain,  
 					secondary_password, perm_any_browser, perm_vault, perm_text_tutor, perm_talking_tutor,  
 					perm_twocan_talk, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, 
 					type, membership_number, active, reseller_id, concurrent_sessions_limit, ip_address_whitelist, contact_forename,  
 					contact_surname, address_line_1, address_line_2, address_line_3, address_line_4, address_postcode, timestamp_created, enableChangePassword
-				FROM users ORDER BY organisation_name, username";
+				FROM users {whereClause} ORDER BY organisation_name, username";
 			 
 			var list = new List<User>();
 			using (var connection = new MySqlConnection(_connectionSettings))
@@ -89,7 +117,7 @@ namespace EMSWeb.BusinessServices.Services
 			}
 			return new PagingResult<User>()
 			{
-				Data = list.Skip(paging.PageSize * (paging.PageIndex - 1)).Take(paging.PageSize).ToList(),
+				Data = list.Skip(filter.PageSize * (filter.PageIndex - 1)).Take(filter.PageSize).ToList(),
 				ItemsCount = list.Count
 			};
 		}

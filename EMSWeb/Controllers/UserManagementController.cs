@@ -33,9 +33,9 @@ namespace EMSWeb.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public async Task<PagingResult<User>> Get(Paging paging)
+        public async Task<PagingResult<User>> Get(UserFilter filter)
         {
-            return await _userManagementService.GetList(paging);
+            return await _userManagementService.GetList(filter);
         }
 
         [HttpGet]

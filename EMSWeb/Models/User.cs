@@ -5,6 +5,19 @@ using System.Runtime.Serialization;
 namespace EMSWeb.Models
 {
 	[DataContract]
+	public class UserFilter : Paging
+	{
+		[DataMember]
+		public string OrganizationName { get; set; }
+
+		[DataMember]
+		public string UserName { get; set; }
+
+		[DataMember]
+		public bool? Active { get; set; }
+	}
+
+	[DataContract]
 	public class User
 	{
 		[DataMember]
