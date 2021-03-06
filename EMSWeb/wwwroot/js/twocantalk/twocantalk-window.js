@@ -138,10 +138,20 @@ class ChatContext {
     sayText = function (text, languageId) {
         window.selectScene(this.sceneRef);
         const langInfo = languages.find(x => x.id == languageId);
+        if (!langInfo.isSpoken)
+            return;
         if (this.genderId == GENDER_ID.male) {
-            window.sayText(text, 2, langInfo.voiceId ? langInfo.voiceId : langInfo.id, 2);
+            sayText(
+                text,
+                langInfo.oddcastMaleVoice ? langInfo.oddcastMaleVoice[0] : 2,
+                langInfo.oddcastLanguageId ? langInfo.oddcastLanguageId : langInfo.id,
+                langInfo.oddcastMaleVoice ? langInfo.oddcastMaleVoice[1] : 2);
         } else {
-            window.sayText(text, 1, langInfo.voiceId ? langInfo.voiceId : langInfo.id, 3);
+            sayText(
+                text,
+                langInfo.oddcastFemaleVoice ? langInfo.oddcastFemaleVoice[0] : 1,
+                langInfo.oddcastLanguageId ? langInfo.oddcastLanguageId : langInfo.id,
+                langInfo.oddcastFemaleVoice ? langInfo.oddcastFemaleVoice[1] : 3);
         }
     }
 
@@ -379,6 +389,8 @@ function initTctController(chatDefinition) {
     let context = new ChatContext(chatDefinition);
     contexts.push(context);
     return context;
+
+
 }
 
 
