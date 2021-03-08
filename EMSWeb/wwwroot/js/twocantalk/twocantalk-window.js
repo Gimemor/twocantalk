@@ -79,8 +79,12 @@ class ChatContext {
     get genderId() { return this.chatDefinition.genderId; }
 
     initLanguageSelector = function () {
+        var availableLanguages = languages
+        if (this.chatDefinition.hideMarkedLanguages) {
+            availableLanguages = availableLanguages.filter(x => !x.hidden);
+        }
         $(this.languageSelectorId).select2({
-            data: languages
+            data: availableLanguages
         });
     }
 

@@ -8,6 +8,7 @@ let languages = [
         "oddcastMaleVoice": [2, 1],
         "oddcastFemaleVoice": [1, 1],
         "isSpoken": 1,
+        "hidden": 1,
     },
     {
         "text": "English (United Kingdom)",
@@ -15,7 +16,7 @@ let languages = [
         "layout": "ms-United Kingdom",
         "language": "en",
         "isSpoken": 1,
-
+        "hidden": 1,
     },
     {
         "text": "Spanish (español)",
