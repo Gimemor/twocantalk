@@ -29,10 +29,13 @@
                             <label asp-for="FormFile"></label>
                             @Html.TextBoxFor(x => x.Filename, new { Class = "form-control", disabled = "true" })
                         </dt>
+                        @if (Model != null && Model.Id == 0)
+                        {
                         <dd>
                             <input asp-for="FormFile" type="file" class="form-control">
                             <span asp-validation-for="FormFile"></span>
                         </dd>
+                        }
                     </dl>
                 </div>
             </div>

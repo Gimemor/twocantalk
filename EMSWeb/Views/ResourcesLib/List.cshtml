@@ -39,12 +39,12 @@
     <div class="main" id="main_res" style="display:none">
         <div class="container-fluid">
             <div class="resources-header d-flex flex-row title-margin-right page-header p-r-0">
-                <div class="page-title">
-                    <h1>Ressources <span>Library</span></h1>
+                <div class="page-title col-lg-10">
+                    <h1>Resources Library </h1>
                 </div>
                 @if (ViewBag.PermAdmin  == true)
                 {
-                    <div class="p-8">
+                    <div class="col-lg-2" style="float:right">
                         <a href="/ResourcesLib/Add" class="btn btn-primary" id="AddResource">Add New Resource</a>
                     </div>
                 }
@@ -169,7 +169,17 @@
             $(nTd).html('<a href="/ResourcesLib/downloadFile?filePath=files_knowledge-share&fileName=' + encodeURI(oData.filename) + '"  class= "delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-download" aria-hidden="true"></i></a>');
         }
     }
-
+    function initTeacherLinks(nTd, sData, oData, iRow, iCol) {
+        console.log(nTd, sData, oData, iRow, iCol);
+        if (_adminPerm) {
+            $(nTd).html('\
+            <a href="/ResourcesLib/Edit/' + oData.id + '" class="settings" title="" data-toggle="tooltip" data-original-title="Settings"><i class="fa fa-edit"></i></a>\
+                <a href="/ResourcesLib/Delete?id=' + oData.id + '" class= "delete title="" data-toggle="tooltip" data-original-title="Delete" >\
+                <i class="fa fa-trash-o"></i></a><a href="../../files/teachers-support-documents/' + encodeURI(oData.filename) + '"  class= "delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-download" aria-hidden="true"></i></a>');
+        } else {
+            $(nTd).html('<a href="../../files/teachers-support-documents/' + encodeURI(oData.filename) + '"  class= "delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-download" aria-hidden="true"></i></a>');
+        }
+    }
     function initLinksresources(nTd, sData, oData, iRow, iCol) {
         if (_adminPerm) {
             $(nTd).html('\
@@ -205,7 +215,7 @@
                 {
                     "data": "filename", "name": "filename",
                     fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-                        $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='/ResourcesLib/downloadFile?filePath=files_resources&fileName=" + + encodeURI(oData.filename) + "' >" + oData.filename + "</a>");
+                        $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='/ResourcesLib/downloadFile?filePath=files_resources&fileName=" +  encodeURI(oData.filename) + "' >" + oData.filename + "</a>");
                     }
                 },
                 {
@@ -304,7 +314,7 @@
                     {
                         "data": "filename", "name": "filename",
                         fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-                            $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='../files/teachers-support-documents/" + oData.filename + "' Target='_blank'>" + oData.filename + "</a>");
+                            $(nTd).html("<i class='fa fa-file-pdf-o pdfTableIcon'></i><a  href='../../files/teachers-support-documents/" + oData.filename + "' Target='_blank'>" + oData.filename + "</a>");
                         }
                     },
                     {
@@ -316,7 +326,7 @@
                     },
                     {
                         "data": "mime_type", "name": "mime_type",
-                        fnCreatedCell: initLinks
+                        fnCreatedCell: initTeacherLinks
                     }
                 ]
             });

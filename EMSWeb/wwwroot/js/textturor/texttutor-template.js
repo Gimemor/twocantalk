@@ -1,7 +1,7 @@
 
 var scene1; 
 var chatTemplate = '\
-   <div class="p-8 pt-0 flex-column d-flex">\
+   <div class="p-8 pt-0 flex-column d-flex" style="width:100%">\
          <div class="row pb-8">\
             <div class="col-lg-12 d-flex flex-wrap" style="justify-content: space-between">\
                 \

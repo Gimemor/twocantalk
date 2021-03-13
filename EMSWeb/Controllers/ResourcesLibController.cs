@@ -247,19 +247,36 @@ namespace EMSWeb.Controllers
 
             for (int pageNr = 1; pageNr <= reader.NumberOfPages; pageNr++)
             {
+                // create the new page and add it to the pdf
+                PdfImportedPage page = writer.GetImportedPage(reader, pageNr);
+                //cb.AddTemplate(page, 0, 0);
+                iTextSharp.text.Rectangle psize = reader.GetPageSizeWithRotation(pageNr);
+                if (isPortrait(reader, pageNr))
+                {
+                    cb.AddTemplate(page, 0, 0);
+                }
+                else
+                {
+                    cb.AddTemplate(page, 0, -1f, 1f, 0, 0, psize.Height);
+                    //cb.AddTemplate(page, 0, 1, -1, 0, page., 0);
+                }
                 Rectangle mediabox = reader.GetPageSize(pageNr);
-                Rectangle cropbox = reader.GetCropBox(pageNr);
                 cb.SetFontAndSize(BaseFont.CreateFont(), 12f);
                 cb.BeginText();
-                cb.ShowTextAligned(Element.ALIGN_CENTER, bookmarkTex, mediabox.GetRight(1) - 15, mediabox.GetTop(300), 90);
+                if (isPortrait(reader, pageNr))
+                {
+                    cb.ShowTextAligned(Element.ALIGN_CENTER, bookmarkTex, mediabox.GetRight(1) - 10, mediabox.GetTop(300), 90);
+                }
+                else
+                {
+                    cb.ShowTextAligned(Element.ALIGN_CENTER, bookmarkTex, mediabox.GetTop(1) - 10, mediabox.GetRight(300), 90);
+                }
                 cb.EndText();
                 cb.Stroke();
+
+
+        
             }
-
-            // create the new page and add it to the pdf
-            PdfImportedPage page = writer.GetImportedPage(reader, 1);
-            cb.AddTemplate(page, 0, 0);
-
             // close the streams and voilá the file should be changed :)
             document.Close();
             fs.Close();
@@ -268,8 +285,22 @@ namespace EMSWeb.Controllers
             IFileProvider provider = new PhysicalFileProvider(wwwrootPath + "\\" + filePath + "\\");
             IFileInfo fileInfo = provider.GetFileInfo(newFile);
             var readStream = fileInfo.CreateReadStream();
+            //System.IO.File.Delete(newFile);
             var mimeType = "application/pdf";
             return File(readStream, mimeType, newFile);
+        }
+
+        public Boolean isPortrait(PdfReader reader, int pagenumber)
+        {
+            Rectangle currentPageRectangle = reader.GetPageSizeWithRotation(pagenumber);
+            if (currentPageRectangle.Width > currentPageRectangle.Height)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

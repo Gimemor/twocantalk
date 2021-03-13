@@ -63,7 +63,7 @@
                 url: "/UserManagement/" + args.item.id,
                 type: "DELETE"
             }).done(function (response) {
-                d.resolve(response);
+                d.resolve(response); window.location.reload();
             });
             return d.promise();
         },
