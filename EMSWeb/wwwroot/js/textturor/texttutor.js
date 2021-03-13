@@ -82,7 +82,7 @@ function initTranslator(
             let sourceLanguageId = event.value.languageId;
             let translatedLanguageId = context.toLanguageId;
             if(sourceLanguageId !== translatedLanguageId) { 
-                translate(event.value.text, context.fromLanguageId, context.toLanguageId, function (data, status) {
+                googleTranslate(event.value.text, context.fromLanguageId, context.toLanguageId, function (data, status) {
                     translatedMessage = event.value.text = data.data.translations[0].translatedText;
                     context.addMessage(event.value, sourceMessage, translatedMessage, sourceLanguageId, translatedLanguageId);
                 });
@@ -125,15 +125,15 @@ function initTranslator(
         el.html(str);    }
 
     $(fromLanguageSelectorId).select2({
-        data: languages
+        data: googleTranslateLanguages
     });
-    context.fromLanguageId = 1;
-    let languageInfo =  languages.find(x => x.id == context.fromLanguageId);
+    context.fromLanguageId = "en";
+    let languageInfo =  googleTranslateLanguages.find(x => x.id == context.fromLanguageId);
     context.keyboard = initKeyboard(languageInfo, inputSelector, keyboardContainer)
     $(fromLanguageSelectorId).val(context.fromLanguageId);
     $(fromLanguageSelectorId).on('change', function(event) {
         context.fromLanguageId = $(fromLanguageSelectorId).val();
-        languageInfo =  languages.find(x => x.id == context.fromLanguageId);
+        languageInfo =  googleTranslateLanguages.find(x => x.id == context.fromLanguageId);
         $(context.keyboard).getkeyboard().destroy();
         context.keyboard =  initKeyboard(languageInfo, context.inputSelector, context.keyboardContainer);
     })
@@ -141,10 +141,10 @@ function initTranslator(
 
 
      $(toLanguageSelectorId).select2({
-        data: languages
+         data: googleTranslateLanguages
     });
-    context.toLanguageId = 1;
-    languageInfo =  languages.find(x => x.id == context.toLanguageId);
+    context.toLanguageId = "en";
+    languageInfo =  googleTranslateLanguages.find(x => x.id == context.toLanguageId);
     $(toLanguageSelectorId).val(context.toLanguageId);
     $(toLanguageSelectorId).on('change', function(event) {
         context.toLanguageId = $(toLanguageSelectorId).val();

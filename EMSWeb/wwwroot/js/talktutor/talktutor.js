@@ -3,6 +3,10 @@ let MESSAGE_TYPE = {
     sent: 0,
     recieved: 1
 }
+let GENDER_ID = {
+    male: 0,
+    female: 1
+}
 
 let contexts = [];
 let loadedScenes = [];
@@ -34,7 +38,8 @@ function initTranslator(
     fromLanguageSelectorId, 
     toLanguageSelectorId,
     clearButtonId,
-    translateButtonId) {
+    translateButtonId,
+    genderId) {
 
     let context = {};
     context.inputSelector = inputSelector;
@@ -45,6 +50,7 @@ function initTranslator(
     context.toLanguageSelectorId = toLanguageSelectorId;
     context.sceneRef = sceneRef;
     context.sceneId = sceneId;
+    context.genderId = genderId;
     context.messages = [];
     $.keyboard.keyaction.enter = function( kb ) {
         // same as $.keyboard.keyaction.accept();
@@ -81,8 +87,22 @@ function initTranslator(
         console.log(event);
     });
     context.sayText = function(text, languageId) {
-        selectScene(context.sceneRef);
-        sayText(text, 1, languageId, 2, 'D', 1);
+        const langInfo = languages.find(x => x.id == languageId);
+        if (!langInfo.isSpoken)
+            return;
+        if (context.genderId == GENDER_ID.male) {
+            sayText(
+                text,
+                langInfo.oddcastMaleVoice ? langInfo.oddcastMaleVoice[0] : 2,
+                langInfo.oddcastLanguageId ? langInfo.oddcastLanguageId : langInfo.id,
+                langInfo.oddcastMaleVoice ? langInfo.oddcastMaleVoice[1] : 2);
+        } else {
+            sayText(
+                text,
+                langInfo.oddcastFemaleVoice ? langInfo.oddcastFemaleVoice[0] : 1,
+                langInfo.oddcastLanguageId ? langInfo.oddcastLanguageId : langInfo.id,
+                langInfo.oddcastFemaleVoice ? langInfo.oddcastFemaleVoice[1] : 3);
+        }
     }
     context.addMessage = function(message, sourceText, translatedText, sourceLanguageId, translatedLanguageId) {
         message.sourceMessage = sourceText;
@@ -169,6 +189,7 @@ function initTalkTutor(chatDefinitions) {
             '#' + element.toLanguageSelectorId,
             '#' + element.clearButtonId,
             '#' + element.translateButtonId,
+            element.genderId
         ));
         index++;
     })
