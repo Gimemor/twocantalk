@@ -35,6 +35,7 @@ namespace EMSWeb.BusinessServices.Services
 				PasswordPlain = d["password_plain"].ToString(),
 				SecondaryPassword = d["secondary_password"].ToString(),
 				PermAnyBrowser = ((bool)d["perm_any_browser"]),
+				PermPhrasebookManager = ((bool)d["perm_phrasebook_manager"]),
 				PermPhrasebook = ((bool)d["perm_phrasebook"]),
 				PermSecondaryLogin = ((byte)d["perm_secondary_login"]) > 0,
 				PermTalkingTutor = ((bool)d["perm_talking_tutor"]),
@@ -94,7 +95,7 @@ namespace EMSWeb.BusinessServices.Services
 			var commandText = $@"
 				SELECT id, username, organisation_name, password, password_plain,  
 					secondary_password, perm_any_browser, perm_vault, perm_text_tutor, perm_talking_tutor,  
-					perm_twocan_talk, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, 
+					perm_twocan_talk, perm_phrasebook_manager, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, 
 					type, membership_number, active, reseller_id, concurrent_sessions_limit, ip_address_whitelist, contact_forename,  
 					contact_surname, address_line_1, address_line_2, address_line_3, address_line_4, address_postcode, timestamp_created, enableChangePassword
 				FROM users {whereClause} ORDER BY organisation_name, username";
@@ -127,7 +128,7 @@ namespace EMSWeb.BusinessServices.Services
 		{
 			var commandText = "SELECT id, username, organisation_name, password, password_plain, " +
 					"secondary_password, perm_any_browser, perm_vault, perm_text_tutor, perm_talking_tutor, " +
-					"perm_twocan_talk, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, " +
+					"perm_twocan_talk, perm_phrasebook_manager, perm_phrasebook, phrasebook_id, perm_secondary_login, license_start_date, license_end_date, " +
 					"type, membership_number, active, reseller_id, concurrent_sessions_limit, ip_address_whitelist, contact_forename, " +
 					"contact_surname, address_line_1, address_line_2, address_line_3, address_line_4, address_postcode, timestamp_created, enableChangePassword " +
 				$"FROM users WHERE id = {id}";
@@ -168,6 +169,7 @@ namespace EMSWeb.BusinessServices.Services
 				 perm_text_tutor = {user.PermTextTutor.ToSqlValue()}, 
 				 perm_talking_tutor = {user.PermTalkingTutor.ToSqlValue()}, 
 				 perm_twocan_talk = {user.PermTwoCanTalk.ToSqlValue()}, 
+				 perm_phrasebook_manager = {user.PermPhrasebookManager.ToSqlValue()}, 
 				 perm_phrasebook = {user.PermPhrasebook.ToSqlValue()}, 
 				 phrasebook_id = {user.PhrasebookId.ToSqlValue()}, 
 				 perm_secondary_login = {user.PermSecondaryLogin.ToSqlValue()}, 
@@ -213,6 +215,7 @@ namespace EMSWeb.BusinessServices.Services
                              perm_text_tutor,
                              perm_talking_tutor,
                              perm_twocan_talk,
+                             perm_phrasebook_manager,
                              perm_phrasebook,
                              phrasebook_id,
                              perm_secondary_login,
@@ -241,8 +244,9 @@ namespace EMSWeb.BusinessServices.Services
                              {user.PermAnyBrowser.ToSqlValue()},
                              {user.PermVault.ToSqlValue()},
                              {user.PermTextTutor.ToSqlValue()},
-                             {user.PermPhrasebook.ToSqlValue()},
+                             {user.PermTalkingTutor.ToSqlValue()},
                              {user.PermTwoCanTalk.ToSqlValue()},
+                             {user.PermPhrasebookManager.ToSqlValue()},
                              {user.PermPhrasebook.ToSqlValue()},
                              {user.PhrasebookId.ToSqlValue()},
                              {user.PermSecondaryLogin.ToSqlValue()},

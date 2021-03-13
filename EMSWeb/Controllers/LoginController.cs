@@ -100,7 +100,8 @@ namespace EMSWeb.Controllers
                                 user.TextTutor = (bool)d["perm_text_tutor"];
                                 user.TalkingTutor = (bool)d["perm_talking_tutor"];
                                 user.TwoCanTalk = (bool)d["perm_twocan_talk"];
-                                user.PhraseBook = (bool)d["perm_phrasebook"];
+                                user.Phrasebook = (bool)d["perm_phrasebook"];
+                                user.PhrasebookManager = (bool)d["perm_phrasebook_manager"];
                                 user.UserType = d["type"].ToString();
                             }
                         }

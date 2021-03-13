@@ -120,7 +120,7 @@
                         <li class="@((ViewBag.Page == "TwoCanTalk") ? "active" : "")"><a href="@Url.ActionLink("Index", "TwoCanTalk")"><i class="fa fa-comments-o"></i> Twocan Talk </a></li>
                     }
 
-                    @if (ViewBag.PhraseBook == true)
+                    @if (ViewBag.PhraseBookManager == true)
                     {
                         <li class="@((ViewBag.Page == "PhrasebookManager") ? "active" : "")"><a href="@Url.ActionLink("Index", "PhrasebookManager")"><i class="fa fa-address-book-o"></i> Phrasebook Manager</a></li>
                     }

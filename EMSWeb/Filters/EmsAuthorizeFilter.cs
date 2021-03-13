@@ -16,7 +16,7 @@ namespace EMSWeb.Filters
         TalkingTutor = 1,
         TextTutor = 2,
         TwoCanTalk = 3,
-        PhraseBook = 4,
+        PhrasebookManager = 4,
         Admin  = 5
     }
     public class ClaimRequirementAttribute : TypeFilterAttribute
@@ -68,7 +68,7 @@ namespace EMSWeb.Filters
                 return;
             }
 
-            if (this._claimType == ClaimType.PhraseBook && loggedInUser.PhraseBook != true)
+            if (this._claimType == ClaimType.PhrasebookManager && loggedInUser.PhrasebookManager != true)
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Index", action = "Index" }));
                 return;

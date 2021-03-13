@@ -59,6 +59,9 @@ namespace EMSWeb.Models
 		public bool PermPhrasebook { get; set; }
 
 		[DataMember]
+		public bool PermPhrasebookManager { get; set; }
+
+		[DataMember]
 		public uint? PhrasebookId { get; set; }
 
 		[DataMember]

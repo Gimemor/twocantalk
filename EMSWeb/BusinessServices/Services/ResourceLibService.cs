@@ -263,7 +263,7 @@ namespace EMSWeb.BusinessServices.Services
 		}
 		public async Task Update(ResourceModel model)
 		{
-			model.Filename = model.FormFile?.FileName ?? $"File_{DateTime.Now.Date}";
+			model.Filename = model.FormFile?.FileName ?? model.Filename ?? $"File_{DateTime.Now.Date}";
 			model.MimeType = GetMime(model.Filename);
 			using (var connection = new MySqlConnection(_connectionString))
 			using (var command = new MySqlCommand(@$"

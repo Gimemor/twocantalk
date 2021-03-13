@@ -49,7 +49,8 @@ namespace EMSWeb
                 ((Controller)context.Controller).ViewBag.PermTextTutor = loggedInUser.TextTutor;
                 ((Controller)context.Controller).ViewBag.PermTalkingTutor = loggedInUser.TalkingTutor;
                 ((Controller)context.Controller).ViewBag.PermAdmin = loggedInUser.PermAdmin; 
-                ((Controller)context.Controller).ViewBag.PhraseBook = loggedInUser.PhraseBook;
+                ((Controller)context.Controller).ViewBag.PhrasebookManager = loggedInUser.PhrasebookManager;
+                ((Controller)context.Controller).ViewBag.Phrasebook = loggedInUser.Phrasebook;
             }
 
         }

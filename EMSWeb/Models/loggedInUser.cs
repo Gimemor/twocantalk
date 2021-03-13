@@ -28,7 +28,8 @@ namespace EMSWeb.Models
         public bool TextTutor { get; set; }
         public bool TalkingTutor { get; set; }
         public bool TwoCanTalk { get; set; }
-        public bool PhraseBook { get; set; }
+        public bool Phrasebook { get; set; }
+        public bool PhrasebookManager { get; set; }
         public string UserType { get; set; }
         public bool PermAdmin
         { 

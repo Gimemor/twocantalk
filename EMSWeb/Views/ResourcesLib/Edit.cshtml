@@ -20,7 +20,7 @@
             <div class="col-3">@Html.ValidationSummary(false)</div>
         </div>
         @Html.HiddenFor(x => x.MimeType, new { Class = "form-control" })
-
+        @Html.HiddenFor(x => x.Filename)
         <div class="card alert">
             <div class="form-group row">
                 <div class="col-md-12">
@@ -31,10 +31,10 @@
                         </dt>
                         @if (Model != null && Model.Id == 0)
                         {
-                        <dd>
-                            <input asp-for="FormFile" type="file" class="form-control">
-                            <span asp-validation-for="FormFile"></span>
-                        </dd>
+                            <dd>
+                                <input asp-for="FormFile" type="file" class="form-control">
+                                <span asp-validation-for="FormFile"></span>
+                            </dd>
                         }
                     </dl>
                 </div>
