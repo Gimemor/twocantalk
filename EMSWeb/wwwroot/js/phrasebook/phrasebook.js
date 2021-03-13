@@ -12,6 +12,9 @@
     get addCategoryButtonId() { return '#' + this.phrasebookDefinition.addCategoryButtonId; }
     get modifyButtonId() { return '#' + this.phrasebookDefinition.modifyButtonId; }
     get clearSelectButtonId() { return '#' + this.phrasebookDefinition.clearSelectButtonId; }
+    get changeCategoryButtonId() { return '#' + this.phrasebookDefinition.changeCategoryButtonId; }
+    get selectCategory() { return this.phrasebookDefinition.selectCategory; }
+    get hideLeafs() { return this.phrasebookDefinition.hideLeafs; }
 
     parseTree(rawTree, parentId) {
         if (!rawTree) {
@@ -20,7 +23,7 @@
         const root = {
             selectedIcon: "glyphicon glyphicon-stop",
             text: rawTree.name,
-            selectable: false,
+            selectable: !!this.selectCategory,
             list: true,
             id: rawTree.id,
             state: {
@@ -32,7 +35,7 @@
         if (rawTree.childLists.length > 0) {
             root.nodes = root.nodes.concat(rawTree.childLists.map(child => this.parseTree(child, parentId)));
         }
-        if (rawTree.phrases.length > 0) {
+        if (rawTree.phrases.length > 0 && !this.hideLeafs) {
             root.nodes = root.nodes.concat(rawTree.phrases.map(phrase => {
                 return {
                     text: phrase.content,
@@ -54,7 +57,7 @@
             alert('Phrasebook is empty');
             return;
         }
-
+        this.rawTree = rawTree;
         this.tree = this.parseTree(rawTree, parentId);
         $(this.phrasebookTreeId).treeview({
             data: this.tree.nodes,
@@ -71,13 +74,18 @@
             if (this.isModal) {
                 $(this.phrasebookModalId).modal('hide');
             }
-            this.phraseSelected.next(data.text);
+            if (!this.selectCategory && !data.list) {
+                this.phraseSelected.next(data.text);
+            } else {
+                this.categorySelected.next(data);
+            }
         });
         let handleButtonState = (event, data) => {
             let selectedData = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
             $(this.deleteButtonId).prop('disabled', selectedData.length === 0);
             $(this.modifyButtonId).prop('disabled', selectedData.length === 0 || selectedData.length > 1);
             $(this.clearSelectButtonId).prop('disabled', selectedData.length === 0);
+            $(this.changeCategoryButtonId).prop('disabled', selectedData.length !== 1);
         }
         $(this.phrasebookTreeId).on('nodeChecked', handleButtonState);
         $(this.phrasebookTreeId).on('nodeUnchecked', handleButtonState);
@@ -87,9 +95,29 @@
         $(this.phrasebookTreeId).trigger('nodeChecked');
     }
 
-    showPhrasebook = (languageId) => {
+    handleCategoryChange(category) {
+        const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
+            .map(x => { return { id: x.id, isList: !!x.list, text: x.text } });
+        let id = 0;
+        let isList = false;
+        if (arrayIds.length == 1) {
+            id = arrayIds[0].id;
+            isList = arrayIds[0].isList;
+        } else {
+            alert('Please, select the only node to be moved');
+            return;
+        }
+        changeCategory(id, category.id, isList);
+        getTree(0).done((rawTree) => this.setTree(rawTree));
+    }
+
+    showPhrasebook = (languageId, oldRawTree) => {
         // Do something to each element here.
-        getTree(languageId).done((rawTree) => this.setTree(rawTree));
+        if (!oldRawTree) {
+            getTree(languageId).done((rawTree) => this.setTree(rawTree));
+        } else {
+            this.setTree(oldRawTree);
+        }
         $(this.deleteButtonId).on('click', (evt) => {
             evt.preventDefault();
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
@@ -100,6 +128,22 @@
         $(this.clearSelectButtonId).on('click', () => {
             $(this.phrasebookTreeId).treeview('uncheckAll', { silent: true });
         })
+        $(this.changeCategoryButtonId).on('click', (evt) => {
+            evt.preventDefault();
+            const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
+                .map(x => { return { id: x.id, isList: !!x.list, text: x.text } });
+            let id = 0;
+            let oldtext = '';
+            if (arrayIds.length == 1) {
+                id = arrayIds[0].id;
+                oldtext = arrayIds[0].text;
+            } else {
+                alert('Please, select the only node to be moved');
+                return;
+            }
+            this.openPhrasebookClicked.next();
+        });
+
         $(this.addPhraseButtonId).on('click', (evt) => {
             evt.preventDefault();
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked && x.list)
@@ -188,6 +232,8 @@
         });
     }
     phraseSelected = new rxjs.Subject();
+    categorySelected = new rxjs.Subject();
+    openPhrasebookClicked = new rxjs.Subject();
 }
 
 function initPhrasebook(phrasebookDefinition) {

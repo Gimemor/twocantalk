@@ -88,6 +88,20 @@ namespace EMSWeb.Models
 		public int ParentId { get; set; }
 	}
 
+
+	[DataContract]
+	public class ChangeCategoryDto 
+	{
+		[DataMember]
+		public int Id { get; set; }
+
+		[DataMember]
+		public int ParentId { get; set; }
+
+		[DataMember]
+		public bool? IsList { get; set; }
+	}
+
 	[DataContract]
 	public class ModifyNodeDto 
 	{

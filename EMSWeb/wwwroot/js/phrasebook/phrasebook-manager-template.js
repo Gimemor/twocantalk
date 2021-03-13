@@ -15,6 +15,7 @@
             <div><button title="Modify" type="button" class="btn btn-light" id="<%=modifyButtonId%>"><i class="fa fa-pencil-square-o"></i> Modify</button></div>\
             <div><button title="Delete" type="button" class="btn btn-light" id="<%=deleteButtonId%>"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </button></div>\
             <div><button title="Clear selection" type="button" class="btn btn-light" id="<%=clearSelectButtonId%>"><i class="fa fa-ban" aria-hidden="true"></i> Clear Selection </button></div>\
+            <div><button title="Change category" type="button" class="btn btn-light" id="<%=changeCategoryButtonId%>"><i class="fa fa-bars" aria-hidden="true"></i> Change Category</button></div>\
         </div>\
     </div>\
     <div class="row pb-8 pt-8" style="display: contents">\
@@ -23,7 +24,7 @@
 </div >\
 ';
 
-    $.fn.phrasebook = function (chatDefinition) {
+    $.fn.phrasebookManager = function (chatDefinition) {
         return this.each(function () {
             $(this).append(
                 _.template(chatTemplate)(chatDefinition)

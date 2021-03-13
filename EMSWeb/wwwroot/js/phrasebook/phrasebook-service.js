@@ -82,3 +82,24 @@ function modifyNode(text, id, isList) {
         dataType: 'json',
     })
 }
+
+
+function changeCategory(nodeId, parentId, isList) {
+    const url = '/api/Phrasebook/change-category';
+    return $.ajax({
+        type: 'POST',
+        url: url,
+        async: false,
+        context: document.body,
+        data: JSON.stringify({
+            id: nodeId,
+            parentId: parentId,
+            isList: isList
+        }),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
+    })
+}

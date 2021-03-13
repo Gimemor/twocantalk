@@ -139,6 +139,36 @@ namespace EMSWeb.BusinessServices.Services
             }
         }
 
+        public async Task ChangeCategory(ChangeCategoryDto changeCategory)
+        {
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
+            {
+                await con.OpenAsync();
+                var commandText = 
+                    $"UPDATE phrases SET phrase_list_id = '{changeCategory.ParentId}' WHERE id = '{changeCategory.Id}'";
+                using (var cmd = new MySqlCommand(commandText, con))
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                await con.CloseAsync();
+            }
+        }
+
+        public async Task ChangeParent(ChangeCategoryDto changeCategory)
+        {
+            using (MySqlConnection con = new MySqlConnection(_connectionString))
+            {
+                await con.OpenAsync();
+                var commandText =
+                    $"UPDATE phrase_lists SET parent_id = '{changeCategory.ParentId}' WHERE id = '{changeCategory.Id}'";
+                using (var cmd = new MySqlCommand(commandText, con))
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                await con.CloseAsync();
+            }
+        }
+
         private async Task GetChildren(PhrasebookList parent) 
         {
             using (MySqlConnection con = new MySqlConnection(_connectionString))

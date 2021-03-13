@@ -59,6 +59,20 @@ namespace EMSWeb.Controllers
             await PhrasebookService.Modify(node);
         }
 
+        [HttpPost("change-category")]
+        [ClaimRequirement(ClaimType.Admin)]
+        public async Task ChangeCategory([FromBody] ChangeCategoryDto dto)
+        {
+            if (dto.IsList == true)
+            {
+                await PhrasebookService.ChangeParent(dto);
+            }
+            else
+            {
+                await PhrasebookService.ChangeCategory(dto);
+            }
+        }
+
         // PUT: api/Phrasebook/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

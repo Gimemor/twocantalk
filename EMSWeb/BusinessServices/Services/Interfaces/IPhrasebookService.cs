@@ -11,5 +11,7 @@ namespace EMSWeb.BusinessServices.Services.Interfaces
 		public Task<int> CreatePhrase(CreatePhraseDto createPhrase);
 		public Task<int> CreateList(CreateListDto createPhrase);
 		public Task Modify(ModifyNodeDto node);
+		public Task ChangeCategory(ChangeCategoryDto dto);
+		public Task ChangeParent(ChangeCategoryDto dto);
 	}
 }
