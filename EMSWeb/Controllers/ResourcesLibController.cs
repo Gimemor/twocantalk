@@ -169,7 +169,7 @@ namespace EMSWeb.Controllers
             {
                 await _resourceLibService.Create(model);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Edit", new { Id = model.Id } );
         }
         [HttpGet]
         [ClaimRequirement(ClaimType.Admin)]

@@ -15,7 +15,8 @@
     get changeCategoryButtonId() { return '#' + this.phrasebookDefinition.changeCategoryButtonId; }
     get selectCategory() { return this.phrasebookDefinition.selectCategory; }
     get hideLeafs() { return this.phrasebookDefinition.hideLeafs; }
-
+    multilineInput = undefined;
+    
     parseTree(rawTree, parentId) {
         if (!rawTree) {
             return;
@@ -146,6 +147,10 @@
 
         $(this.addPhraseButtonId).on('click', (evt) => {
             evt.preventDefault();
+            if(!this.multilineInput) {
+                alert('Multiline input is not injected! Please, contact the developer');
+            }
+            
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked && x.list)
                 .map(x => { return { id: x.id, isList: !!x.list, text: x.text } });
             let parentId;
@@ -158,20 +163,14 @@
                 alert('Please, select the only category to be parent for a new phrase');
                 return;
             }
-
-            DayPilot.Modal.prompt('Enter the text:', oldtext, { theme: "modal_rounded" }).then((result) => {
-                var text = result.result;
-                if (!text) {
-                    return;
-                }
-
+            const subscription = this.multilineInput.showModal('').pipe(rxjs.operators.first()).subscribe(text => {
                 createPhrase(text, parentId).then(id => {
                     getTree(languageId).done((rawTree) => {
                         this.setTree(rawTree, parentId);
                         const selection = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.id  == id)[0]
                         $(this.phrasebookTreeId).treeview('selectNode', [selection, { silent: true }]);
                         $(this.phrasebookTreeId).animate({
-                            scrollTop: $(this.phrasebookTreeId).find(".node-selected").offset().top - 500
+                            scrollTop: $(this.phrasebookTreeId).find(".node-selected").get(0).offsetTop  - 500
                         }, 500);
                     });
                 });
@@ -196,7 +195,7 @@
                         const selection = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.id == id)[0]
                         $(this.phrasebookTreeId).treeview('selectNode', [selection, { silent: true }]);
                         $(this.phrasebookTreeId).animate({
-                            scrollTop: $(this.phrasebookTreeId).find(".node-selected").offset().top - 500
+                            scrollTop: $(this.phrasebookTreeId).find(".node-selected").get(0).offsetTop  - 500
                         }, 500);
                     });
                 });
@@ -206,6 +205,10 @@
 
         $(this.modifyButtonId).on('click', (evt) => {
             evt.preventDefault();
+            if(!this.multilineInput) {
+                alert('Multiline input is not injected! Please, contact the developer');
+            }
+
             const arrayIds = $(this.phrasebookTreeId).treeview('getEnabled').filter(x => x.state.checked)
                 .map(x => { return { id: x.id, isList: !!x.list, text: x.text } });
             let id = 0;
@@ -217,9 +220,7 @@
                 alert('Please, select the only node to be edited');
                 return;
             }
-
-            DayPilot.Modal.prompt('Enter the name:', oldtext, { theme: "modal_rounded" }).then((result) => { 
-                var text = result.result;
+            const subscription = this.multilineInput.showModal(oldtext).pipe(rxjs.operators.first()).subscribe(text => {
                 if (!text) {
                     return;
                 }
@@ -227,13 +228,17 @@
                 selection.text = text;
                 selection.parentId = (!!selection.parentId) ? selection.parentId : 0;
                 modifyNode(text, id, arrayIds[0].isList);
-                $(this.phrasebookTreeId).treeview('revealNode', [selection, { silent: true }]);
+                $(this.phrasebookTreeId).treeview('selectNode', [selection, { silent: true }]);
+                $(this.phrasebookTreeId).animate({
+                    scrollTop: $(this.phrasebookTreeId).find(".node-selected").get(0).offsetTop - 500
+                }, 500);
             });
         });
     }
     phraseSelected = new rxjs.Subject();
     categorySelected = new rxjs.Subject();
     openPhrasebookClicked = new rxjs.Subject();
+    addPhraseClicked = new rxjs.Subject();
 }
 
 function initPhrasebook(phrasebookDefinition) {

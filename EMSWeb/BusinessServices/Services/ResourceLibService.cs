@@ -240,6 +240,8 @@ namespace EMSWeb.BusinessServices.Services
 					STR_TO_DATE('{DateTime.UtcNow.ToString("MM\\/dd\\/yyyy hh:mm:ss")}', '%m/%d/%Y %r')
 				)
 			"))
+			using (var readConnection = new MySqlConnection(_connectionString))
+			using(var lastInserted = new MySqlCommand(@$"SELECT MAX(id) as Id FROM files;"))
 			{
 				command.Connection = connection;
 				await connection.OpenAsync();
@@ -248,8 +250,20 @@ namespace EMSWeb.BusinessServices.Services
 					await SaveFile(model.Filename, model.FormFile);
 				}
 				await command.ExecuteNonQueryAsync();
+
+
+				lastInserted.Connection = readConnection;
+				await readConnection.OpenAsync();
+				var d = await lastInserted.ExecuteReaderAsync();
+				if (d.HasRows)
+				{
+					await d.ReadAsync();
+					model.Id = UInt32.Parse(d["Id"].ToString());
+				}
+				await readConnection.CloseAsync();
 				await connection.CloseAsync();
 			}
+			
 		}
 		public string GetMime(string fileName)
 		{

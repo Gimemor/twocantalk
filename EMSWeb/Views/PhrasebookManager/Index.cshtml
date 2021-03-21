@@ -25,7 +25,8 @@
     <script type="text/javascript" src="https://vhss-d.oddcast.com/vhost_embed_functions_v4.php?acc=1015607&js=0"></script>
     <script type="text/javascript" src="~/js/lodash.js"></script>
     <script type="text/javascript" src="~/js/keyboard.js"></script>
-
+    <script type="text/javascript" src="~/js/modals/multiline-input-modal-template.js"></script>
+    <script type="text/javascript" src="~/js/modals/multiline-input-modal.js"></script>
     <script type="text/javascript" src="~/js/phrasebook/phrasebook-manager-template.js"></script>
     <script type="text/javascript" src="~/js/phrasebook/phrasebook-template.js"></script>
     <script type="text/javascript" src="~/js/phrasebook/phrasebook-service.js"></script>
@@ -43,9 +44,15 @@
                     addPhraseButtonId: 'addPhraseButton',
                     modifyButtonId: 'modifyButton',
                     deleteButtonId: 'deleteButton',
-                    showControlButton: @(ViewBag.PermAdmin == true? "true" : "false"),
+                    showControlButton: @(ViewBag.PermAdmin == true ? "true" : "false"),
                     clearSelectButtonId: 'clearSelectionButton',
-                    changeCategoryButtonId: 'changeCategoryButton'
+                    changeCategoryButtonId: 'changeCategoryButton',
+                    addPhraseModal: {
+                        modalSaveId: 'addPhraseModalSave',
+                        modalTextareaId: 'addPhraseModalTextarea',
+                        modalId: 'addPhraseModal',
+                        modalTitle: 'Please, enter a phrase',
+                    }
         }
 
          var categorySelectorDefinition =
@@ -67,7 +74,9 @@
     </script>
 }
 <div id="main-content">
-      <div id="phrasebookModal">
+    <div id="phrasebookModal">
+    </div>
+    <div id="addPhraseModalContainer">
     </div>
 </div>
 <div id="categorySelector">
@@ -78,13 +87,21 @@
         $('[data-toggle="tooltip"]').tooltip();
         $('#phrasebookModal').phrasebookManager(viewDefinition);
         const firstPhrasebook = initPhrasebook(viewDefinition);
-
+        if (viewDefinition.addPhraseModal) {
+            $('#addPhraseModalContainer').multilineModal(viewDefinition.addPhraseModal);
+            const multilineModal = initMultilineInput(viewDefinition.addPhraseModal);
+            
+            
+            firstPhrasebook.multilineInput = multilineModal;
+                       
+        }
         // init category selector
         $('#categorySelector').phrasebook(categorySelectorDefinition);
         const categorySelector = initPhrasebook(categorySelectorDefinition);
         firstPhrasebook.openPhrasebookClicked.subscribe(x => categorySelector.showPhrasebook(x, firstPhrasebook.rawTree));
         categorySelector.categorySelected.subscribe(x => firstPhrasebook.handleCategoryChange(x));
-
+        
+        // init add category modal
         firstPhrasebook.showPhrasebook();
 
     });
